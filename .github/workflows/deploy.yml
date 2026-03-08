@@ -1,0 +1,96 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build all projects
+        run: |
+          mkdir -p _site
+          
+          # Build each project as static export
+          for dir in aurora obsidian horizontal-gallery magnetic-cursor parallax-scrollytelling; do
+            if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+              echo "Building $dir..."
+              cd "$dir"
+              npm ci --legacy-peer-deps 2>/dev/null || npm install --legacy-peer-deps
+              npm run build || true
+              if [ -d "out" ]; then
+                cp -r out "../_site/$dir"
+                echo "✅ $dir built"
+              else
+                echo "❌ $dir failed"
+              fi
+              cd ..
+            fi
+          done
+          
+          # Create index page
+          cat > _site/index.html << 'INDEXEOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Design Lab — Experiments</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e5e5e5; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 4rem 2rem; }
+              h1 { font-size: 3rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+              .subtitle { color: #888; margin-bottom: 3rem; font-size: 1.1rem; }
+              .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1000px; width: 100%; }
+              a { text-decoration: none; color: inherit; }
+              .card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 2rem; transition: all 0.3s; }
+              .card:hover { border-color: #667eea; transform: translateY(-4px); box-shadow: 0 8px 30px rgba(102,126,234,0.15); }
+              .card h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+              .card p { color: #888; font-size: 0.9rem; line-height: 1.6; }
+              .tag { display: inline-block; background: #1a1a2e; color: #667eea; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; margin-top: 0.8rem; margin-right: 0.3rem; }
+            </style>
+          </head>
+          <body>
+            <h1>🧪 Design Lab</h1>
+            <p class="subtitle">Cutting-edge web design experiments</p>
+            <div class="grid">
+              <a href="./aurora/"><div class="card"><h2>Aurora</h2><p>Product landing page with animated gradients and scroll reveals</p><span class="tag">GSAP</span><span class="tag">Scroll</span></div></a>
+              <a href="./obsidian/"><div class="card"><h2>Obsidian</h2><p>Dark luxury theme with smooth scroll, cursor glow, testimonial carousel</p><span class="tag">Framer Motion</span><span class="tag">Cursor FX</span></div></a>
+              <a href="./horizontal-gallery/"><div class="card"><h2>Horizontal Gallery</h2><p>Horizontal scroll gallery with parallax depth</p><span class="tag">CSS Scroll-Snap</span><span class="tag">Parallax</span></div></a>
+              <a href="./magnetic-cursor/"><div class="card"><h2>Magnetic Cursor</h2><p>Interactive magnetic cursor effects and hover animations</p><span class="tag">Framer Motion</span><span class="tag">Physics</span></div></a>
+              <a href="./parallax-scrollytelling/"><div class="card"><h2>Parallax Scrollytelling</h2><p>Multi-layer parallax narrative with pinned sections</p><span class="tag">GSAP ScrollTrigger</span><span class="tag">Parallax</span></div></a>
+            </div>
+          </body>
+          </html>
+          INDEXEOF
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

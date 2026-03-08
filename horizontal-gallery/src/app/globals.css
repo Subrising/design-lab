@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #08080c;
+  color: #e8e6e3;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #08080c;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+/* Horizontal scroll container */
+.gallery-track {
+  display: flex;
+  gap: 40px;
+  padding: 0 calc(50vw - 200px);
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 100vh;
+  align-items: center;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.gallery-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* 3D Card */
+.card-3d {
+  flex-shrink: 0;
+  width: 400px;
+  height: 550px;
+  border-radius: 24px;
+  position: relative;
+  scroll-snap-align: center;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Card shine effect */
+.card-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-3d:hover .card-shine {
+  opacity: 1;
+}
+
+/* Gradient backgrounds for cards */
+.card-gradient-1 { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+.card-gradient-2 { background: linear-gradient(135deg, #1a0a2e, #2d1b69, #5b21b6); }
+.card-gradient-3 { background: linear-gradient(135deg, #0a1a2e, #0e4429, #065f46); }
+.card-gradient-4 { background: linear-gradient(135deg, #2e1a0a, #78350f, #92400e); }
+.card-gradient-5 { background: linear-gradient(135deg, #2e0a1a, #9f1239, #be123c); }
+.card-gradient-6 { background: linear-gradient(135deg, #0a2e1a, #064e3b, #047857); }
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  gap: 6px;
+}
+
+.scroll-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.scroll-dot.active {
+  background: white;
+  transform: scale(1.3);
+}
