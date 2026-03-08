@@ -76,6 +76,7 @@ jobs:
               <a href="./horizontal-gallery/"><div class="card"><h2>Horizontal Gallery</h2><p>Horizontal scroll gallery with parallax depth</p><span class="tag">CSS Scroll-Snap</span><span class="tag">Parallax</span></div></a>
               <a href="./magnetic-cursor/"><div class="card"><h2>Magnetic Cursor</h2><p>Interactive magnetic cursor effects and hover animations</p><span class="tag">Framer Motion</span><span class="tag">Physics</span></div></a>
               <a href="./parallax-scrollytelling/"><div class="card"><h2>Parallax Scrollytelling</h2><p>Multi-layer parallax narrative with pinned sections</p><span class="tag">GSAP ScrollTrigger</span><span class="tag">Parallax</span></div></a>
+              <a href="./text-morphing/"><div class="card"><h2>Text Morphing</h2><p>Cursor mask reveal, text scramble, typewriter, split text, glitch effects</p><span class="tag">clip-path</span><span class="tag">GSAP</span><span class="tag">Text FX</span></div></a>
             </div>
           </body>
           </html>
