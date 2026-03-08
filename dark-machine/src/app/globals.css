@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #050505;
+  --neon-red: #ff0040;
+  --neon-cyan: #00f0ff;
+  --neon-green: #39ff14;
+  --neon-purple: #bf00ff;
+  --text: #e0e0e0;
+  --text-dim: #555;
+  --surface: #0a0a0a;
+  --border: rgba(255, 255, 255, 0.05);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: auto; }
+
+body {
+  font-family: var(--font-inter), "Consolas", monospace;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scan lines overlay */
+.scanlines::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+}
+
+/* Glitch text */
+.glitch {
+  position: relative;
+  animation: glitchSkew 4s infinite linear alternate-reverse;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  color: var(--neon-cyan);
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  animation: glitchTop 3s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  color: var(--neon-red);
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  animation: glitchBottom 2.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitchSkew {
+  0%, 80%, 100% { transform: skewX(0deg); }
+  85% { transform: skewX(2deg); }
+  90% { transform: skewX(-1deg); }
+}
+
+@keyframes glitchTop {
+  0%, 90%, 100% { transform: translate(0); }
+  92% { transform: translate(-3px, -1px); }
+  94% { transform: translate(3px, 1px); }
+  96% { transform: translate(-1px, 0); }
+}
+
+@keyframes glitchBottom {
+  0%, 88%, 100% { transform: translate(0); }
+  90% { transform: translate(2px, 1px); }
+  93% { transform: translate(-2px, -1px); }
+  96% { transform: translate(1px, 0); }
+}
+
+/* Neon glow */
+.neon-glow-red {
+  text-shadow: 0 0 10px var(--neon-red), 0 0 30px var(--neon-red), 0 0 60px rgba(255, 0, 64, 0.3);
+}
+
+.neon-glow-cyan {
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 30px var(--neon-cyan), 0 0 60px rgba(0, 240, 255, 0.3);
+}
+
+/* Typography */
+.display-massive {
+  font-size: clamp(4rem, 10vw, 10rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.display-large {
+  font-size: clamp(2rem, 5vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mono-text {
+  font-family: "Consolas", "SF Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* RGB border animation */
+.rgb-border {
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.rgb-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(from 0deg, var(--neon-red), var(--neon-cyan), var(--neon-green), var(--neon-purple), var(--neon-red));
+  z-index: -1;
+  animation: rgbRotate 3s linear infinite;
+  opacity: 0.6;
+  filter: blur(4px);
+}
+
+@keyframes rgbRotate {
+  100% { filter: blur(4px) hue-rotate(360deg); }
+}
+
+/* Spec bar */
+.spec-bar {
+  height: 4px;
+  background: var(--surface);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.spec-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1.5s cubic-bezier(0.25, 0, 0, 1);
+  position: relative;
+}
+
+.spec-bar-fill::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: inherit;
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* Product 3D container */
+.product-3d-container {
+  perspective: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-3d {
+  width: 400px;
+  height: 400px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+
+/* Particle canvas */
+.particle-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grid background */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Section */
+.section-full {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CTA */
+.cyber-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: transparent;
+  border: 1px solid var(--neon-red);
+  color: var(--neon-red);
+  font-family: "Consolas", monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  transition: all 0.3s;
+}
+
+.cyber-btn:hover {
+  background: var(--neon-red);
+  color: #000;
+  box-shadow: 0 0 30px rgba(255, 0, 64, 0.4);
+}
+
+.cyber-btn.cyan {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.cyber-btn.cyan:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+}
+
+/* Counter */
+.cyber-counter {
+  font-family: "Consolas", monospace;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Spec card */
+.spec-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.spec-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .product-3d { width: 280px; height: 280px; }
+}

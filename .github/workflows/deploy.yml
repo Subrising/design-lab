@@ -29,7 +29,7 @@ jobs:
           mkdir -p _site
           
           # Build each project as static export
-          for dir in aurora obsidian horizontal-gallery magnetic-cursor parallax-scrollytelling text-morphing bento-grid liquid-glass kinetic-typography; do
+          for dir in aurora obsidian horizontal-gallery magnetic-cursor parallax-scrollytelling text-morphing bento-grid liquid-glass kinetic-typography product-launch fashion-runway dark-machine immersive-story creative-studio; do
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Building $dir..."
               cd "$dir"

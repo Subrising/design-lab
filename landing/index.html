@@ -710,7 +710,7 @@
   <section class="hero">
     <div class="hero-badge">
       <span class="dot"></span>
-      9 experiments live
+      14 experiments live
     </div>
     <h1>
       <span class="gradient-text">Design Lab</span>
@@ -735,10 +735,140 @@
     </div>
   </section>
 
-  <section class="experiments" id="experiments">
+  <!-- ===== FEATURED V2 EXPERIMENTS ===== -->
+  <section class="experiments" id="experiments" style="padding-bottom: 2rem;">
     <div class="section-header">
-      <h2>Experiments</h2>
-      <p>Each project pushes a different boundary of web interaction design</p>
+      <h2 style="font-size: clamp(2rem, 4vw, 3rem);">Featured <span class="gradient-text">Experiences</span></h2>
+      <p>Full-page immersive experiences — Awwwards-quality, portfolio-grade work</p>
+    </div>
+
+    <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 2rem;">
+
+      <!-- F01 Product Launch -->
+      <a href="./product-launch/" class="card" style="border-color: rgba(102,126,234,0.2);">
+        <div class="card-preview" style="height: 240px;">
+          <div class="preview-animation" style="background: radial-gradient(circle at 50% 50%, #1a1a2e, #000); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #3a3a3c, #1d1d1f 60%, #000); box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1); position: relative;">
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #2997ff, #bf4dff); box-shadow: 0 0 20px rgba(41,151,255,0.4);"></div>
+            </div>
+          </div>
+          <div class="preview-overlay"></div>
+          <span class="card-number" style="color: #2997ff;">NEW</span>
+        </div>
+        <div class="card-body">
+          <h3>Product Launch</h3>
+          <p>Apple-style scroll-driven product reveal with pinned sections, animated counters, and dark-to-light transitions</p>
+          <div class="card-tags">
+            <span class="tag">GSAP ScrollTrigger</span>
+            <span class="tag">Lenis</span>
+            <span class="tag">Pinned Scroll</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </a>
+
+      <!-- F02 Fashion Runway -->
+      <a href="./fashion-runway/" class="card" style="border-color: rgba(232,197,71,0.15);">
+        <div class="card-preview" style="height: 240px;">
+          <div class="preview-animation" style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #1a1a2e); background-size: 400% 400%; animation: auroraShift 8s ease infinite;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; color: rgba(255,255,255,0.08);">MAISON</div>
+          </div>
+          <div class="preview-overlay"></div>
+          <span class="card-number" style="color: #e8c547;">NEW</span>
+        </div>
+        <div class="card-body">
+          <h3>Fashion Runway</h3>
+          <p>High-end fashion brand experience with clip-path reveals, horizontal scroll collection, custom cursor, and editorial layout</p>
+          <div class="card-tags">
+            <span class="tag">GSAP</span>
+            <span class="tag">Clip-Path</span>
+            <span class="tag">Horizontal Scroll</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </a>
+
+      <!-- F03 Dark Machine -->
+      <a href="./dark-machine/" class="card" style="border-color: rgba(255,0,64,0.15);">
+        <div class="card-preview" style="height: 240px;">
+          <div class="preview-animation" style="background: #050505; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px); display: flex; align-items: center; justify-content: center;">
+            <div style="font-size: 2.5rem; font-weight: 900; color: #ff0040; text-shadow: 0 0 10px #ff0040, 0 0 30px rgba(255,0,64,0.3); letter-spacing: 0.05em;">VX</div>
+          </div>
+          <div class="preview-overlay"></div>
+          <span class="card-number" style="color: #ff0040;">NEW</span>
+        </div>
+        <div class="card-body">
+          <h3>Dark Machine</h3>
+          <p>ASUS ROG-style cyberpunk product showcase with glitch effects, neon accents, particle systems, and animated spec bars</p>
+          <div class="card-tags">
+            <span class="tag">Canvas Particles</span>
+            <span class="tag">Glitch FX</span>
+            <span class="tag">3D CSS</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </a>
+
+      <!-- F04 Immersive Story -->
+      <a href="./immersive-story/" class="card" style="border-color: rgba(200,149,108,0.15);">
+        <div class="card-preview" style="height: 240px;">
+          <div class="preview-animation" style="background: linear-gradient(180deg, #0a1520 0%, #1a2a35 50%, #050a10 100%); display: flex; align-items: center; justify-content: center;">
+            <div style="font-family: Georgia, serif; font-size: 1.5rem; font-style: italic; color: rgba(200,149,108,0.6); text-align: center; line-height: 1.4;">The Lost City<br/>of Meridian</div>
+          </div>
+          <div class="preview-overlay"></div>
+          <span class="card-number" style="color: #c8956c;">NEW</span>
+        </div>
+        <div class="card-body">
+          <h3>Immersive Storytelling</h3>
+          <p>Scroll-driven narrative with chapters, horizontal panels, cinematic bars, progress navigation, and animated counters</p>
+          <div class="card-tags">
+            <span class="tag">GSAP</span>
+            <span class="tag">Chapters</span>
+            <span class="tag">Mixed Scroll</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </a>
+
+      <!-- F05 Creative Studio -->
+      <a href="./creative-studio/" class="card" style="border-color: rgba(200,255,0,0.12);">
+        <div class="card-preview" style="height: 240px;">
+          <div class="preview-animation" style="background: #080808; display: flex; align-items: center; justify-content: center;">
+            <div style="font-size: 3rem; font-weight: 800; letter-spacing: -0.04em; color: rgba(255,255,255,0.06);">Void<span style="color: rgba(200,255,0,0.4);">.</span></div>
+          </div>
+          <div class="preview-overlay"></div>
+          <span class="card-number" style="color: #c8ff00;">NEW</span>
+        </div>
+        <div class="card-body">
+          <h3>Creative Studio</h3>
+          <p>Lusion-style agency portfolio with interactive particles, 3D tilt cards, custom cursor, staggered reveals, and magnetic buttons</p>
+          <div class="card-tags">
+            <span class="tag">Canvas Particles</span>
+            <span class="tag">3D Tilt</span>
+            <span class="tag">Custom Cursor</span>
+          </div>
+        </div>
+        <div class="card-arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===== V1 ARCHIVE ===== -->
+  <section class="experiments" id="v1-archive" style="padding-top: 2rem;">
+    <div class="section-header">
+      <h2>v1 Component Demos</h2>
+      <p>The original experiments — individual component showcases</p>
     </div>
 
     <div class="cards-grid">

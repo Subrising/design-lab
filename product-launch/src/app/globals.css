@@ -1,0 +1,310 @@
+@import "tailwindcss";
+
+:root {
+  --bg-dark: #000000;
+  --bg-light: #f5f5f7;
+  --text-primary: #f5f5f7;
+  --text-secondary: #86868b;
+  --text-dark: #1d1d1f;
+  --accent: #2997ff;
+  --accent-purple: #bf4dff;
+  --accent-orange: #ff6723;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scroll container */
+.smooth-wrapper {
+  overflow: hidden;
+}
+
+/* Section utilities */
+.section-full {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-spacer {
+  height: 100vh;
+}
+
+/* Typography - Apple style */
+.headline-large {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.headline-medium {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.headline-small {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.body-large {
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-warm {
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Product image styling */
+.product-image {
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Pinned section */
+.pin-section {
+  height: 300vh;
+  position: relative;
+}
+
+.pin-content {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Feature grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 24px;
+  padding: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  transition: background 0.3s ease;
+}
+
+.feature-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Spec counter */
+.spec-value {
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.spec-label {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Dark to light transition */
+.light-section {
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+.light-section .body-large {
+  color: #6e6e73;
+}
+
+/* Scroll progress */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+  z-index: 9999;
+  transform-origin: left;
+}
+
+/* Nav */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(0, 0, 0, 0.7);
+  transition: background 0.3s ease;
+}
+
+.top-nav.light {
+  background: rgba(245, 245, 247, 0.7);
+}
+
+/* CTA button */
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2.5rem;
+  border-radius: 100px;
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.cta-button:hover {
+  background: #0077ed;
+  transform: scale(1.02);
+}
+
+.cta-button.outline {
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+}
+
+.cta-button.outline:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* Image sequence canvas */
+.sequence-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80vw;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+/* Floating specs */
+.floating-spec {
+  position: absolute;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Horizontal scroll */
+.horizontal-scroll-container {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2rem;
+  will-change: transform;
+}
+
+.horizontal-card {
+  flex-shrink: 0;
+  width: 400px;
+  height: 500px;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Noise overlay */
+.noise-overlay::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Color chip */
+.color-chip {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.color-chip:hover,
+.color-chip.active {
+  border-color: white;
+  transform: scale(1.15);
+}
+
+@media (max-width: 768px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .horizontal-card {
+    width: 300px;
+    height: 400px;
+  }
+}
