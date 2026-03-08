@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/horizontal-gallery",
+  basePath: "/design-lab/horizontal-gallery",
   images: { unoptimized: true },
   /* config options here */
 };

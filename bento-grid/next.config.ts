@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/bento-grid",
+  basePath: "/design-lab/bento-grid",
   images: { unoptimized: true },
 };
 

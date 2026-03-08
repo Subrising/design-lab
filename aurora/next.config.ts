@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/aurora",
+  basePath: "/design-lab/aurora",
   images: { unoptimized: true },
   /* config options here */
 };

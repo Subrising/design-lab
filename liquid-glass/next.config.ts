@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/liquid-glass",
+  basePath: "/design-lab/liquid-glass",
   images: { unoptimized: true },
 };
 

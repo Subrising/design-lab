@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/text-morphing",
+  basePath: "/design-lab/text-morphing",
   images: { unoptimized: true },
 };
 

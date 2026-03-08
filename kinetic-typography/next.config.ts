@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/kinetic-typography",
+  basePath: "/design-lab/kinetic-typography",
   images: { unoptimized: true },
 };
 
