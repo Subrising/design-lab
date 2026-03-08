@@ -29,7 +29,7 @@ jobs:
           mkdir -p _site
           
           # Build each project as static export
-          for dir in aurora obsidian horizontal-gallery magnetic-cursor parallax-scrollytelling text-morphing bento-grid liquid-glass; do
+          for dir in aurora obsidian horizontal-gallery magnetic-cursor parallax-scrollytelling text-morphing bento-grid liquid-glass kinetic-typography; do
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Building $dir..."
               cd "$dir"
@@ -79,6 +79,7 @@ jobs:
               <a href="./text-morphing/"><div class="card"><h2>Text Morphing</h2><p>Cursor mask reveal, text scramble, typewriter, split text, glitch effects</p><span class="tag">clip-path</span><span class="tag">GSAP</span><span class="tag">Text FX</span></div></a>
               <a href="./bento-grid/"><div class="card"><h2>Bento Grid</h2><p>Asymmetric dashboard layout with animated cards, charts, and staggered reveals</p><span class="tag">CSS Grid</span><span class="tag">Motion</span><span class="tag">Stagger</span></div></a>
               <a href="./liquid-glass/"><div class="card"><h2>Liquid Glass</h2><p>Glassmorphism with animated liquid blobs, frosted cards, SVG morphing, and cursor glow</p><span class="tag">backdrop-filter</span><span class="tag">SVG Morph</span><span class="tag">Motion</span></div></a>
+              <a href="./kinetic-typography/"><div class="card"><h2>Kinetic Typography</h2><p>Physics-based text: gravity drop, scroll warp, magnetic repel, wave, explode/reform</p><span class="tag">GSAP</span><span class="tag">ScrollTrigger</span><span class="tag">rAF</span></div></a>
             </div>
           </body>
           </html>
