@@ -27,9 +27,10 @@ jobs:
       - name: Build all projects
         run: |
           mkdir -p _site
+          touch _site/.nojekyll
           
           # Build each project as static export
-          for dir in apple-scroll aurora bento-grid bubble-metaballs clerk creative-studio dark-machine dennis-snellenberg fashion-runway horizontal-gallery immersive-garden immersive-story jason-bergh kinetic-typography lando-norris linear liquid-glass magnetic-cursor neon-rated obsidian ohzi-interactive parallax-scrollytelling product-launch raycast sticky-grid stripe studio-dialect text-morphing unseen-studio wavy-carousels zajno-motion ; do
+          for dir in apple-scroll ascii-dithering aurora bento-grid britive bubble-metaballs cartier-watches clerk creative-studio dark-machine dennis-snellenberg fashion-runway horizontal-gallery immersive-garden immersive-story jason-bergh kinetic-typography lando-norris linear liquid-glass magnetic-cursor mindmarket neon-rated obsidian ohzi-interactive parallax-scrollytelling ponpon-mania product-launch pudding-motifs raycast reactive-depth-tube sticky-grid stripe studio-dialect text-morphing unseen-studio voxelized-physics wavy-carousels zajno-motion; do
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Building $dir..."
               cd "$dir"
