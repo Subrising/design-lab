@@ -37,8 +37,8 @@ export default function GLImage({
       uPlaneSizes: { value: new THREE.Vector2(size[0], size[1]) },
       uImageSizes: {
         value: new THREE.Vector2(
-          texture.image?.width || 800,
-          texture.image?.height || 1200
+          (texture.image as HTMLImageElement)?.naturalWidth || 800,
+          (texture.image as HTMLImageElement)?.naturalHeight || 1200
         ),
       },
       uScrollSpeed: { value: 0 },
