@@ -30,7 +30,7 @@ jobs:
           touch _site/.nojekyll
           
           # Build each project as static export
-          for dir in apple-scroll ascii-dithering aurora bento-grid britive bubble-metaballs cartier-watches clerk creative-studio dark-machine dennis-snellenberg fashion-runway horizontal-gallery immersive-garden immersive-story jason-bergh kinetic-typography lando-norris linear liquid-glass magnetic-cursor mindmarket neon-rated obsidian ohzi-interactive parallax-scrollytelling ponpon-mania product-launch pudding-motifs raycast reactive-depth-tube sticky-grid stripe studio-dialect text-morphing unseen-studio voxelized-physics wavy-carousels zajno-motion; do
+          for dir in apple-scroll ascii-dithering aurora bento-grid blended-shader britive bruno-simon bubble-metaballs cartier-watches clerk creative-studio dark-machine dennis-snellenberg fashion-runway gen-02-samsy horizontal-gallery igloo-inc immersive-garden immersive-story jason-bergh kinetic-typography lando-norris linear liquid-glass magnetic-cursor messenger-meta mindmarket neon-rated obsidian ohzi-interactive parallax-scrollytelling ponpon-mania product-launch pudding-motifs raycast reactive-depth-tube sticky-grid stripe studio-dialect text-destruction text-morphing unseen-studio utsubo-expo voxelized-physics wavy-carousels zajno-motion; do
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Building $dir..."
               cd "$dir"
