@@ -90,7 +90,7 @@ export default function SpeedSection() {
           { x: "-100%", opacity: 0 },
           {
             x: "200%",
-            opacity: [0, 1, 1, 0],
+            opacity: 1,
             stagger: 0.1,
             ease: "none",
             scrollTrigger: {

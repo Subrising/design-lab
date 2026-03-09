@@ -8,7 +8,7 @@ const draw = {
     pathLength: 1,
     opacity: 1,
     transition: {
-      pathLength: { delay: i * 0.2, duration: 1.5, ease: "easeInOut" },
+      pathLength: { delay: i * 0.2, duration: 1.5, ease: "easeInOut" as const },
       opacity: { delay: i * 0.2, duration: 0.3 },
     },
   }),
@@ -22,7 +22,7 @@ const nodeAppear = {
     transition: {
       delay: i * 0.15 + 0.3,
       duration: 0.5,
-      type: "spring",
+      type: "spring" as const,
       stiffness: 200,
     },
   }),

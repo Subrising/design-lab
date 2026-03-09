@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import localFont from "next/font/local";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
-});
-
-const bebas = localFont({
-  src: [],
-  variable: "--font-bebas",
-  display: "swap",
-  fallback: ["Impact", "Haettenschweiler", "Franklin Gothic Bold", "Charcoal", "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", "sans-serif"],
 });
 
 export const metadata: Metadata = {
