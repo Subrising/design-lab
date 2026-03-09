@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #faf5eb;
+  --color-ink: #1a1a2e;
+  --color-coral: #ff6b6b;
+  --color-mint: #4ecdc4;
+  --color-lavender: #a78bfa;
+  --color-gold: #fbbf24;
+  --color-blush: #f9a8d4;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Georgia", serif;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Hand-drawn wobble filter */
+.svg-hand-drawn {
+  filter: url(#hand-drawn-filter);
+}
+
+/* Bouncy section transitions */
+.section-enter {
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+}
+
+/* Glow effect on drawn paths */
+.path-glow {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-lavender);
+  border-radius: 3px;
+}
