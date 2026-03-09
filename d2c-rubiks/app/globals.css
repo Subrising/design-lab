@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --cube-red: #c41e3a;
+  --cube-blue: #0051ba;
+  --cube-green: #009b48;
+  --cube-orange: #ff5800;
+  --cube-yellow: #ffd500;
+  --cube-white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+  cursor: default;
+  background: #000;
+  color: #fff;
+}
+
+canvas {
+  touch-action: none;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+.text-glow {
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.15);
+}
