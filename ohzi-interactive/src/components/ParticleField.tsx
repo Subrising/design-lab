@@ -68,27 +68,19 @@ export default function ParticleField() {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={PARTICLE_COUNT}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
         <bufferAttribute
           attach="attributes-aScale"
-          count={PARTICLE_COUNT}
-          array={scales}
-          itemSize={1}
+          args={[scales, 1]}
         />
         <bufferAttribute
           attach="attributes-aSpeed"
-          count={PARTICLE_COUNT}
-          array={speeds}
-          itemSize={1}
+          args={[speeds, 1]}
         />
         <bufferAttribute
           attach="attributes-aRandomness"
-          count={PARTICLE_COUNT}
-          array={randomness}
-          itemSize={3}
+          args={[randomness, 3]}
         />
       </bufferGeometry>
       <shaderMaterial
