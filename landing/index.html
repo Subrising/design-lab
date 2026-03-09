@@ -4,1181 +4,658 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design Lab — Cutting-Edge Web Experiments</title>
-  <meta name="description" content="A curated collection of bleeding-edge web design experiments pushing the boundaries of interactive experiences.">
+  <meta name="description" content="46 bleeding-edge web design experiments. GSAP, Three.js, WebGL, scroll animations, 3D physics, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
-
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
       --bg: #050507;
       --surface: #0c0c10;
+      --surface-2: #141418;
       --border: rgba(255,255,255,0.06);
-      --border-hover: rgba(255,255,255,0.12);
+      --border-hover: rgba(255,255,255,0.15);
       --text: #e8e8ed;
       --text-muted: #6b6b80;
       --accent-1: #667eea;
       --accent-2: #764ba2;
-      --accent-3: #f093fb;
-      --accent-4: #4facfe;
       --glow: rgba(102,126,234,0.15);
     }
-
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== CURSOR GLOW ===== */
-    .cursor-glow {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-      background: radial-gradient(circle, rgba(102,126,234,0.08) 0%, transparent 70%);
-      transform: translate(-50%, -50%);
-      transition: opacity 0.3s;
-      will-change: transform;
-    }
-
-    /* ===== GRAIN OVERLAY ===== */
-    .grain {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      pointer-events: none;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    }
-
-    /* ===== ANIMATED BACKGROUND ===== */
-    .bg-orbs {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .bg-orbs .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.4;
-      animation: float 20s ease-in-out infinite;
-    }
-
-    .bg-orbs .orb:nth-child(1) {
-      width: 500px; height: 500px;
-      background: var(--accent-1);
-      top: -10%; left: -5%;
-      animation-delay: 0s;
-      opacity: 0.15;
-    }
-
-    .bg-orbs .orb:nth-child(2) {
-      width: 400px; height: 400px;
-      background: var(--accent-2);
-      top: 50%; right: -10%;
-      animation-delay: -7s;
-      opacity: 0.12;
-    }
-
-    .bg-orbs .orb:nth-child(3) {
-      width: 350px; height: 350px;
-      background: var(--accent-3);
-      bottom: -5%; left: 30%;
-      animation-delay: -14s;
-      opacity: 0.1;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(30px, -40px) scale(1.05); }
-      50% { transform: translate(-20px, 20px) scale(0.95); }
-      75% { transform: translate(40px, 30px) scale(1.03); }
-    }
-
-    /* ===== HERO ===== */
+    /* Hero */
     .hero {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
+      min-height: 60vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2rem;
+      padding: 6rem 2rem 4rem;
+      position: relative;
     }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 1rem;
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-      backdrop-filter: blur(10px);
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 0.2s;
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(102,126,234,0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
-
-    .hero-badge .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent-1);
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
-    }
-
     .hero h1 {
-      font-size: clamp(3rem, 8vw, 7rem);
+      font-size: clamp(3rem, 8vw, 6rem);
       font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 0.95;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 0.4s;
-    }
-
-    .hero h1 .gradient-text {
-      background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 1rem;
     }
-
-    .hero h1 .line2 {
-      display: block;
-      font-size: 0.5em;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      -webkit-text-fill-color: var(--text-muted);
-      background: none;
-      margin-top: 0.4em;
-    }
-
-    .hero-description {
-      font-size: clamp(1rem, 2vw, 1.25rem);
+    .hero .subtitle {
+      font-size: 1.2rem;
       color: var(--text-muted);
-      max-width: 500px;
-      line-height: 1.7;
-      margin-bottom: 3rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 0.6s;
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
     }
-
-    .hero-cta {
-      display: flex;
-      gap: 1rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 0.8s;
-    }
-
-    .btn-primary {
+    .hero .count {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.8rem 1.8rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 100px;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .hero .count span {
+      color: var(--accent-1);
+      font-weight: 700;
+    }
+
+    /* Filter nav */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0 2rem 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent-1);
+      color: var(--text);
+      background: rgba(102,126,234,0.08);
+    }
+
+    /* Grid */
+    .grid-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    /* Section headers */
+    .section-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-header .badge {
+      font-size: 0.7rem;
       background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
       color: white;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: all 0.3s;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(102,126,234,0.3);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.8rem 1.8rem;
+      padding: 0.2rem 0.6rem;
       border-radius: 100px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-weight: 500;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: all 0.3s;
-      backdrop-filter: blur(10px);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--border-hover);
-      background: rgba(255,255,255,0.08);
-      transform: translateY(-2px);
-    }
-
-    .scroll-indicator {
-      position: absolute;
-      bottom: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      font-weight: 600;
       text-transform: uppercase;
-      opacity: 0;
-      animation: fadeUp 0.8s ease forwards 1s;
+      letter-spacing: 0.05em;
+    }
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
     }
 
-    .scroll-indicator .line {
-      width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, var(--accent-1), transparent);
-      animation: scrollLine 2s ease-in-out infinite;
-    }
-
-    @keyframes scrollLine {
-      0%, 100% { transform: scaleY(1); opacity: 1; }
-      50% { transform: scaleY(0.5); opacity: 0.3; }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===== EXPERIMENTS SECTION ===== */
-    .experiments {
-      position: relative;
-      z-index: 1;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 4rem 2rem 8rem;
-    }
-
-    .section-header {
-      text-align: center;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.2rem;
       margin-bottom: 4rem;
     }
 
-    .section-header h2 {
-      font-size: clamp(1.5rem, 3vw, 2rem);
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-
-    .section-header p {
-      color: var(--text-muted);
-      font-size: 1rem;
-    }
-
-    /* ===== EXPERIMENT CARDS ===== */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1.5rem;
-    }
-
     .card {
-      position: relative;
-      border-radius: 16px;
-      border: 1px solid var(--border);
       background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
       color: inherit;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      opacity: 0;
-      transform: translateY(30px);
+      display: flex;
+      flex-direction: column;
     }
-
-    .card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
     .card:hover {
       border-color: var(--border-hover);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px var(--glow);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 60px var(--glow);
     }
-
-    .card-preview {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #0f0f15, #1a1a28);
-    }
-
-    .card-preview .preview-animation {
-      position: absolute;
-      inset: 0;
-      opacity: 0.6;
-      transition: opacity 0.4s;
-    }
-
-    .card:hover .preview-animation {
-      opacity: 1;
-    }
-
-    .card-preview .preview-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 50%, var(--surface));
-    }
-
-    .card-number {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      opacity: 0.5;
-      z-index: 2;
-    }
-
     .card-body {
       padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
-
-    .card-body h3 {
-      font-size: 1.2rem;
+    .card h3 {
+      font-size: 1.1rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
-      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-
-    .card:hover .card-body h3 {
-      background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .card .new-badge {
+      font-size: 0.6rem;
+      background: #22c55e;
+      color: #000;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
-
-    .card-body p {
+    .card p {
       color: var(--text-muted);
       font-size: 0.85rem;
-      line-height: 1.6;
-      margin-bottom: 1rem;
+      line-height: 1.5;
+      flex: 1;
     }
-
-    .card-tags {
+    .card .tags {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
+      margin-top: 1rem;
     }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
+    .card .tag {
       font-size: 0.7rem;
-      font-weight: 500;
-      font-family: 'JetBrains Mono', monospace;
       background: rgba(102,126,234,0.08);
       color: var(--accent-1);
-      border: 1px solid rgba(102,126,234,0.12);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .card-arrow {
-      position: absolute;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      color: var(--text-muted);
+    /* Featured cards */
+    .featured .card {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+      border-color: rgba(102,126,234,0.15);
+    }
+    .featured .card:hover {
+      border-color: rgba(102,126,234,0.3);
     }
 
-    .card:hover .card-arrow {
-      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-      border-color: transparent;
-      color: white;
-      transform: translate(2px, -2px);
-    }
-
-    /* ===== PREVIEW ANIMATIONS (unique per card) ===== */
-    /* Aurora - gradient waves */
-    .preview-aurora {
-      background: linear-gradient(45deg, #667eea33, #764ba233, #f093fb33, #667eea33);
-      background-size: 400% 400%;
-      animation: auroraShift 8s ease infinite;
-    }
-    @keyframes auroraShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    /* Obsidian - dark shimmer */
-    .preview-obsidian {
-      background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e, #0a0a0a);
-      background-size: 300% 300%;
-      animation: obsidianShimmer 6s ease infinite;
-    }
-    .preview-obsidian::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
-    }
-    @keyframes obsidianShimmer {
-      0%, 100% { background-position: 0% 0%; }
-      50% { background-position: 100% 100%; }
-    }
-
-    /* Horizontal Gallery - sliding panels */
-    .preview-hgallery {
-      display: flex;
-      gap: 8px;
-      padding: 20px;
-      animation: hscroll 10s linear infinite;
-    }
-    .preview-hgallery .panel {
-      min-width: 120px;
-      height: 160px;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-    .preview-hgallery .panel:nth-child(1) { background: linear-gradient(135deg, #667eea, #764ba2); }
-    .preview-hgallery .panel:nth-child(2) { background: linear-gradient(135deg, #f093fb, #f5576c); }
-    .preview-hgallery .panel:nth-child(3) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-    .preview-hgallery .panel:nth-child(4) { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-    .preview-hgallery .panel:nth-child(5) { background: linear-gradient(135deg, #fa709a, #fee140); }
-    .preview-hgallery .panel:nth-child(6) { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
-    @keyframes hscroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-384px); }
-    }
-
-    /* Magnetic Cursor - floating particles */
-    .preview-magnetic canvas { width: 100%; height: 100%; }
-
-    /* Parallax - layered depth */
-    .preview-parallax {
-      position: relative;
-    }
-    .preview-parallax .layer {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .preview-parallax .layer:nth-child(1) {
-      background: linear-gradient(to bottom, #0f0f1a, #1a1a30);
-    }
-    .preview-parallax .layer:nth-child(2) {
-      opacity: 0.3;
-      animation: parallaxFloat 4s ease-in-out infinite;
-    }
-    .preview-parallax .layer:nth-child(2)::before {
-      content: '';
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--accent-1), transparent);
-      filter: blur(40px);
-    }
-    .preview-parallax .layer:nth-child(3) {
-      opacity: 0.15;
-      animation: parallaxFloat 4s ease-in-out infinite reverse;
-    }
-    .preview-parallax .layer:nth-child(3)::before {
-      content: '';
-      width: 150px; height: 150px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--accent-3), transparent);
-      filter: blur(30px);
-    }
-    @keyframes parallaxFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    /* Text Morphing - glitch text */
-    .preview-textmorph {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      color: white;
-    }
-    .preview-textmorph .morph-text {
-      position: relative;
-    }
-    .preview-textmorph .morph-text::before,
-    .preview-textmorph .morph-text::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    .preview-textmorph .morph-text::before {
-      color: var(--accent-1);
-      animation: glitch1 3s infinite;
-      clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-    }
-    .preview-textmorph .morph-text::after {
-      color: var(--accent-3);
-      animation: glitch2 3s infinite;
-      clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%);
-    }
-    @keyframes glitch1 {
-      0%, 90%, 100% { transform: translate(0); }
-      92% { transform: translate(4px, -2px); }
-      94% { transform: translate(-3px, 1px); }
-      96% { transform: translate(2px, 2px); }
-    }
-    @keyframes glitch2 {
-      0%, 88%, 100% { transform: translate(0); }
-      90% { transform: translate(-3px, 2px); }
-      93% { transform: translate(4px, -1px); }
-      95% { transform: translate(-2px, -2px); }
-    }
-
-    /* Bento Grid - animated grid */
-    .preview-bento {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 6px;
-      padding: 16px;
-      height: 100%;
-    }
-    .preview-bento .cell {
-      border-radius: 8px;
-      animation: bentoFade 4s ease-in-out infinite;
-    }
-    .preview-bento .cell:nth-child(1) { grid-column: span 2; background: linear-gradient(135deg, #667eea22, #764ba233); animation-delay: 0s; }
-    .preview-bento .cell:nth-child(2) { background: linear-gradient(135deg, #f093fb22, #f5576c33); animation-delay: 0.5s; }
-    .preview-bento .cell:nth-child(3) { background: linear-gradient(135deg, #4facfe22, #00f2fe33); animation-delay: 1s; }
-    .preview-bento .cell:nth-child(4) { grid-column: span 2; background: linear-gradient(135deg, #43e97b22, #38f9d733); animation-delay: 1.5s; }
-    @keyframes bentoFade {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); }
-    }
-
-    /* Liquid Glass - blobs */
-    .preview-liquid {
-      position: relative;
-      overflow: hidden;
-    }
-    .preview-liquid .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(30px);
-      animation: blobMove 8s ease-in-out infinite;
-    }
-    .preview-liquid .blob:nth-child(1) {
-      width: 150px; height: 150px;
-      background: rgba(102,126,234,0.4);
-      top: 10%; left: 20%;
-      animation-delay: 0s;
-    }
-    .preview-liquid .blob:nth-child(2) {
-      width: 120px; height: 120px;
-      background: rgba(240,147,251,0.4);
-      top: 40%; right: 15%;
-      animation-delay: -3s;
-    }
-    .preview-liquid .blob:nth-child(3) {
-      width: 100px; height: 100px;
-      background: rgba(79,172,254,0.4);
-      bottom: 10%; left: 40%;
-      animation-delay: -6s;
-    }
-    .preview-liquid .glass-card {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 140px; height: 90px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-    @keyframes blobMove {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(20px, -20px) scale(1.1); }
-      66% { transform: translate(-15px, 15px) scale(0.9); }
-    }
-
-    /* Kinetic Typography - bouncing letters */
-    .preview-kinetic {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      font-size: 2rem;
-      font-weight: 900;
-      color: white;
-    }
-    .preview-kinetic span {
-      display: inline-block;
-      animation: kinBounce 2s ease-in-out infinite;
-    }
-    .preview-kinetic span:nth-child(1) { animation-delay: 0s; }
-    .preview-kinetic span:nth-child(2) { animation-delay: 0.1s; }
-    .preview-kinetic span:nth-child(3) { animation-delay: 0.2s; }
-    .preview-kinetic span:nth-child(4) { animation-delay: 0.3s; }
-    .preview-kinetic span:nth-child(5) { animation-delay: 0.4s; }
-    .preview-kinetic span:nth-child(6) { animation-delay: 0.5s; }
-    .preview-kinetic span:nth-child(7) { animation-delay: 0.6s; }
-    @keyframes kinBounce {
-      0%, 100% { transform: translateY(0) rotate(0); }
-      25% { transform: translateY(-20px) rotate(-5deg); }
-      50% { transform: translateY(0) rotate(0); }
-    }
-
-    /* ===== FOOTER ===== */
-    .footer {
-      position: relative;
-      z-index: 1;
+    /* Footer */
+    footer {
       text-align: center;
       padding: 3rem 2rem;
       border-top: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.85rem;
     }
+    footer a { color: var(--accent-1); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
 
-    .footer a {
-      color: var(--accent-1);
-      text-decoration: none;
+    /* Animations */
+    .card {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.5s ease forwards;
     }
-
-    .footer a:hover {
-      text-decoration: underline;
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
     }
+    .grid .card:nth-child(1) { animation-delay: 0.02s; }
+    .grid .card:nth-child(2) { animation-delay: 0.04s; }
+    .grid .card:nth-child(3) { animation-delay: 0.06s; }
+    .grid .card:nth-child(4) { animation-delay: 0.08s; }
+    .grid .card:nth-child(5) { animation-delay: 0.1s; }
+    .grid .card:nth-child(6) { animation-delay: 0.12s; }
+    .grid .card:nth-child(7) { animation-delay: 0.14s; }
+    .grid .card:nth-child(8) { animation-delay: 0.16s; }
+    .grid .card:nth-child(9) { animation-delay: 0.18s; }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      .cards-grid {
-        grid-template-columns: 1fr;
-      }
-      .hero-cta {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-
-    /* ===== MAGNETIC PARTICLES CANVAS ===== */
-    .preview-magnetic {
-      position: relative;
+      .grid { grid-template-columns: 1fr; }
+      .hero { min-height: 40vh; padding: 4rem 1.5rem 3rem; }
     }
   </style>
 </head>
 <body>
-  <div class="grain"></div>
-  <div class="cursor-glow" id="cursorGlow"></div>
 
-  <div class="bg-orbs">
-    <div class="orb"></div>
-    <div class="orb"></div>
-    <div class="orb"></div>
+  <div class="hero">
+    <h1>🧪 Design Lab</h1>
+    <p class="subtitle">Cutting-edge web design experiments pushing the boundaries of interactive experiences. GSAP, Three.js, WebGL, shaders, scroll animations, and more.</p>
+    <div class="count"><span>45</span> experiments &mdash; all open source</div>
   </div>
 
-  <section class="hero">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      14 experiments live
-    </div>
-    <h1>
-      <span class="gradient-text">Design Lab</span>
-      <span class="line2">Web Experiments</span>
-    </h1>
-    <p class="hero-description">
-      A curated collection of interactive web experiments exploring animation, physics, and visual design at the edge of what browsers can do.
-    </p>
-    <div class="hero-cta">
-      <a href="#experiments" class="btn-primary">
-        Explore Experiments
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a href="https://github.com/Subrising/design-lab" target="_blank" class="btn-secondary">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        Source
-      </a>
-    </div>
-    <div class="scroll-indicator">
-      <span>Scroll</span>
-      <div class="line"></div>
-    </div>
-  </section>
+  <div class="grid-container">
 
-  <!-- ===== FEATURED V2 EXPERIMENTS ===== -->
-  <section class="experiments" id="experiments" style="padding-bottom: 2rem;">
+    <!-- FLAGSHIP EXPERIMENTS -->
     <div class="section-header">
-      <h2 style="font-size: clamp(2rem, 4vw, 3rem);">Featured <span class="gradient-text">Experiences</span></h2>
-      <p>Full-page immersive experiences — Awwwards-quality, portfolio-grade work</p>
+      <h2>🔥 Flagship Experiments <span class="badge">Featured</span></h2>
+      <p>Full-page immersive experiences — the showcase pieces</p>
     </div>
-
-    <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 2rem;">
-
-      <!-- F01 Product Launch -->
-      <a href="./product-launch/" class="card" style="border-color: rgba(102,126,234,0.2);">
-        <div class="card-preview" style="height: 240px;">
-          <div class="preview-animation" style="background: radial-gradient(circle at 50% 50%, #1a1a2e, #000); display: flex; align-items: center; justify-content: center;">
-            <div style="width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #3a3a3c, #1d1d1f 60%, #000); box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1); position: relative;">
-              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #2997ff, #bf4dff); box-shadow: 0 0 20px rgba(41,151,255,0.4);"></div>
-            </div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number" style="color: #2997ff;">NEW</span>
-        </div>
+    <div class="grid featured">
+      <a href="./product-launch/" class="card">
         <div class="card-body">
-          <h3>Product Launch</h3>
+          <h3>Product Launch <span class="new-badge">New</span></h3>
           <p>Apple-style scroll-driven product reveal with pinned sections, animated counters, and dark-to-light transitions</p>
-          <div class="card-tags">
-            <span class="tag">GSAP ScrollTrigger</span>
-            <span class="tag">Lenis</span>
-            <span class="tag">Pinned Scroll</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="tags"><span class="tag">GSAP ScrollTrigger</span><span class="tag">Lenis</span><span class="tag">Pinned Scroll</span></div>
         </div>
       </a>
-
-      <!-- F02 Fashion Runway -->
-      <a href="./fashion-runway/" class="card" style="border-color: rgba(232,197,71,0.15);">
-        <div class="card-preview" style="height: 240px;">
-          <div class="preview-animation" style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #1a1a2e); background-size: 400% 400%; animation: auroraShift 8s ease infinite;">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; color: rgba(255,255,255,0.08);">MAISON</div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number" style="color: #e8c547;">NEW</span>
-        </div>
+      <a href="./fashion-runway/" class="card">
         <div class="card-body">
-          <h3>Fashion Runway</h3>
+          <h3>Fashion Runway <span class="new-badge">New</span></h3>
           <p>High-end fashion brand experience with clip-path reveals, horizontal scroll collection, custom cursor, and editorial layout</p>
-          <div class="card-tags">
-            <span class="tag">GSAP</span>
-            <span class="tag">Clip-Path</span>
-            <span class="tag">Horizontal Scroll</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="tags"><span class="tag">GSAP</span><span class="tag">Clip-Path</span><span class="tag">Horizontal Scroll</span></div>
         </div>
       </a>
-
-      <!-- F03 Dark Machine -->
-      <a href="./dark-machine/" class="card" style="border-color: rgba(255,0,64,0.15);">
-        <div class="card-preview" style="height: 240px;">
-          <div class="preview-animation" style="background: #050505; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px); display: flex; align-items: center; justify-content: center;">
-            <div style="font-size: 2.5rem; font-weight: 900; color: #ff0040; text-shadow: 0 0 10px #ff0040, 0 0 30px rgba(255,0,64,0.3); letter-spacing: 0.05em;">VX</div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number" style="color: #ff0040;">NEW</span>
-        </div>
+      <a href="./dark-machine/" class="card">
         <div class="card-body">
-          <h3>Dark Machine</h3>
+          <h3>Dark Machine <span class="new-badge">New</span></h3>
           <p>ASUS ROG-style cyberpunk product showcase with glitch effects, neon accents, particle systems, and animated spec bars</p>
-          <div class="card-tags">
-            <span class="tag">Canvas Particles</span>
-            <span class="tag">Glitch FX</span>
-            <span class="tag">3D CSS</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="tags"><span class="tag">Canvas Particles</span><span class="tag">Glitch FX</span><span class="tag">3D CSS</span></div>
         </div>
       </a>
-
-      <!-- F04 Immersive Story -->
-      <a href="./immersive-story/" class="card" style="border-color: rgba(200,149,108,0.15);">
-        <div class="card-preview" style="height: 240px;">
-          <div class="preview-animation" style="background: linear-gradient(180deg, #0a1520 0%, #1a2a35 50%, #050a10 100%); display: flex; align-items: center; justify-content: center;">
-            <div style="font-family: Georgia, serif; font-size: 1.5rem; font-style: italic; color: rgba(200,149,108,0.6); text-align: center; line-height: 1.4;">The Lost City<br/>of Meridian</div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number" style="color: #c8956c;">NEW</span>
-        </div>
+      <a href="./immersive-story/" class="card">
         <div class="card-body">
-          <h3>Immersive Storytelling</h3>
+          <h3>Immersive Storytelling <span class="new-badge">New</span></h3>
           <p>Scroll-driven narrative with chapters, horizontal panels, cinematic bars, progress navigation, and animated counters</p>
-          <div class="card-tags">
-            <span class="tag">GSAP</span>
-            <span class="tag">Chapters</span>
-            <span class="tag">Mixed Scroll</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="tags"><span class="tag">GSAP</span><span class="tag">Chapters</span><span class="tag">Mixed Scroll</span></div>
         </div>
       </a>
-
-      <!-- F05 Creative Studio -->
-      <a href="./creative-studio/" class="card" style="border-color: rgba(200,255,0,0.12);">
-        <div class="card-preview" style="height: 240px;">
-          <div class="preview-animation" style="background: #080808; display: flex; align-items: center; justify-content: center;">
-            <div style="font-size: 3rem; font-weight: 800; letter-spacing: -0.04em; color: rgba(255,255,255,0.06);">Void<span style="color: rgba(200,255,0,0.4);">.</span></div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number" style="color: #c8ff00;">NEW</span>
-        </div>
+      <a href="./creative-studio/" class="card">
         <div class="card-body">
-          <h3>Creative Studio</h3>
+          <h3>Creative Studio <span class="new-badge">New</span></h3>
           <p>Lusion-style agency portfolio with interactive particles, 3D tilt cards, custom cursor, staggered reveals, and magnetic buttons</p>
-          <div class="card-tags">
-            <span class="tag">Canvas Particles</span>
-            <span class="tag">3D Tilt</span>
-            <span class="tag">Custom Cursor</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="tags"><span class="tag">Canvas Particles</span><span class="tag">3D Tilt</span><span class="tag">Custom Cursor</span></div>
         </div>
       </a>
-
     </div>
-  </section>
 
-  <!-- ===== V1 ARCHIVE ===== -->
-  <section class="experiments" id="v1-archive" style="padding-top: 2rem;">
+    <!-- SITE RECREATIONS -->
     <div class="section-header">
-      <h2>v1 Component Demos</h2>
-      <p>The original experiments — individual component showcases</p>
+      <h2>🎯 Site Recreations</h2>
+      <p>Pixel-perfect recreations of iconic websites and brands</p>
+    </div>
+    <div class="grid">
+      <a href="./stripe/" class="card">
+        <div class="card-body">
+          <h3>Stripe</h3>
+          <p>Gradient mesh hero with morphing nav and scroll storytelling — Stripe's iconic design language</p>
+          <div class="tags"><span class="tag">Gradient Mesh</span><span class="tag">GSAP</span><span class="tag">Scroll</span></div>
+        </div>
+      </a>
+      <a href="./linear/" class="card">
+        <div class="card-body">
+          <h3>Linear</h3>
+          <p>Plan, build, and ship — Linear's clean dark SaaS aesthetic with smooth reveals</p>
+          <div class="tags"><span class="tag">Motion</span><span class="tag">Dark UI</span><span class="tag">SaaS</span></div>
+        </div>
+      </a>
+      <a href="./raycast/" class="card">
+        <div class="card-body">
+          <h3>Raycast</h3>
+          <p>Dark SaaS landing with Three.js background, bento grid, glassmorphism effects</p>
+          <div class="tags"><span class="tag">Three.js</span><span class="tag">Bento</span><span class="tag">Glass</span></div>
+        </div>
+      </a>
+      <a href="./clerk/" class="card">
+        <div class="card-body">
+          <h3>Clerk</h3>
+          <p>SVG animation hero, live component demos, bento grid — auth platform aesthetic</p>
+          <div class="tags"><span class="tag">SVG</span><span class="tag">Bento</span><span class="tag">Components</span></div>
+        </div>
+      </a>
+      <a href="./lando-norris/" class="card">
+        <div class="card-body">
+          <h3>Lando Norris</h3>
+          <p>Bold, fast, unstoppable — an F1-inspired portfolio experience</p>
+          <div class="tags"><span class="tag">Motion</span><span class="tag">Typography</span><span class="tag">Sports</span></div>
+        </div>
+      </a>
+      <a href="./cartier-watches/" class="card">
+        <div class="card-body">
+          <h3>Cartier Watches</h3>
+          <p>Luxury watch showcase — Watches &amp; Wonders inspired premium experience</p>
+          <div class="tags"><span class="tag">Luxury</span><span class="tag">Animation</span><span class="tag">Editorial</span></div>
+        </div>
+      </a>
+      <a href="./britive/" class="card">
+        <div class="card-body">
+          <h3>Britive</h3>
+          <p>Premium SaaS experience with polished interactions and clean design</p>
+          <div class="tags"><span class="tag">SaaS</span><span class="tag">Motion</span><span class="tag">Clean UI</span></div>
+        </div>
+      </a>
+      <a href="./messenger-meta/" class="card">
+        <div class="card-body">
+          <h3>Messenger (Meta)</h3>
+          <p>WebGL chat UI with canvas text rendering and gradient effects</p>
+          <div class="tags"><span class="tag">WebGL</span><span class="tag">Canvas</span><span class="tag">Chat UI</span></div>
+        </div>
+      </a>
+      <a href="./apple-scroll/" class="card">
+        <div class="card-body">
+          <h3>Apple Scroll</h3>
+          <p>Apple-style scroll-driven product page with pinned sections and transitions</p>
+          <div class="tags"><span class="tag">Scroll</span><span class="tag">Pinned</span><span class="tag">Apple</span></div>
+        </div>
+      </a>
     </div>
 
-    <div class="cards-grid">
-
-      <!-- 01 Aurora -->
-      <a href="./aurora/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-aurora"></div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">01</span>
-        </div>
+    <!-- STUDIO / PORTFOLIO RECREATIONS -->
+    <div class="section-header">
+      <h2>🏢 Studio & Portfolio</h2>
+      <p>Creative agency and developer portfolio styles</p>
+    </div>
+    <div class="grid">
+      <a href="./dennis-snellenberg/" class="card">
         <div class="card-body">
-          <h3>Aurora</h3>
-          <p>Product landing page with animated gradient backgrounds and scroll-triggered reveal animations</p>
-          <div class="card-tags">
-            <span class="tag">GSAP</span>
-            <span class="tag">Scroll Reveals</span>
-            <span class="tag">Gradients</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Dennis Snellenberg</h3>
+          <p>Parallax scroll, magnetic cursor, text mask reveal — creative developer portfolio</p>
+          <div class="tags"><span class="tag">Parallax</span><span class="tag">Magnetic Cursor</span><span class="tag">Mask</span></div>
         </div>
       </a>
-
-      <!-- 02 Obsidian -->
-      <a href="./obsidian/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-obsidian"></div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">02</span>
-        </div>
+      <a href="./unseen-studio/" class="card">
         <div class="card-body">
-          <h3>Obsidian</h3>
-          <p>Dark luxury theme with smooth scroll, cursor glow effects, and testimonial carousel</p>
-          <div class="card-tags">
-            <span class="tag">Framer Motion</span>
-            <span class="tag">Cursor FX</span>
-            <span class="tag">Lenis</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Unseen Studio</h3>
+          <p>Award-winning studio crafting bold digital identities and immersive web experiences</p>
+          <div class="tags"><span class="tag">Motion</span><span class="tag">Typography</span><span class="tag">Agency</span></div>
         </div>
       </a>
-
-      <!-- 03 Horizontal Gallery -->
-      <a href="./horizontal-gallery/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-hgallery">
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">03</span>
-        </div>
+      <a href="./studio-dialect/" class="card">
         <div class="card-body">
-          <h3>Horizontal Gallery</h3>
-          <p>Horizontal scroll gallery with parallax depth effects and CSS scroll-snap</p>
-          <div class="card-tags">
-            <span class="tag">Scroll-Snap</span>
-            <span class="tag">Parallax</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Studio Dialect</h3>
+          <p>Interactive 3D globe, magnetic cursor, mouse-reactive interactions</p>
+          <div class="tags"><span class="tag">3D Globe</span><span class="tag">Cursor FX</span><span class="tag">Interactive</span></div>
         </div>
       </a>
-
-      <!-- 04 Magnetic Cursor -->
-      <a href="./magnetic-cursor/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-magnetic">
-            <canvas id="magneticCanvas"></canvas>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">04</span>
-        </div>
+      <a href="./jason-bergh/" class="card">
         <div class="card-body">
-          <h3>Magnetic Cursor</h3>
-          <p>Interactive magnetic cursor effects with physics-based hover animations</p>
-          <div class="card-tags">
-            <span class="tag">Framer Motion</span>
-            <span class="tag">Physics</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Jason Bergh</h3>
+          <p>Cinematic full-screen scroll portfolio with dramatic typography reveals</p>
+          <div class="tags"><span class="tag">Cinematic</span><span class="tag">Typography</span><span class="tag">Scroll</span></div>
         </div>
       </a>
-
-      <!-- 05 Parallax Scrollytelling -->
-      <a href="./parallax-scrollytelling/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-parallax">
-            <div class="layer"></div>
-            <div class="layer"></div>
-            <div class="layer"></div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">05</span>
-        </div>
+      <a href="./igloo-inc/" class="card">
         <div class="card-body">
-          <h3>Parallax Scrollytelling</h3>
-          <p>Multi-layer parallax narrative with pinned sections and depth-based scroll</p>
-          <div class="card-tags">
-            <span class="tag">GSAP ScrollTrigger</span>
-            <span class="tag">Parallax</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Igloo Inc</h3>
+          <p>Immersive WebGL UI with interactive 3D elements</p>
+          <div class="tags"><span class="tag">WebGL</span><span class="tag">3D</span><span class="tag">Interactive</span></div>
         </div>
       </a>
+      <a href="./mindmarket/" class="card">
+        <div class="card-body">
+          <h3>Mindmarket</h3>
+          <p>SVG path drawing, scroll-triggered illustrations, GSAP reveals</p>
+          <div class="tags"><span class="tag">SVG</span><span class="tag">Path Drawing</span><span class="tag">GSAP</span></div>
+        </div>
+      </a>
+    </div>
 
-      <!-- 06 Text Morphing -->
+    <!-- 3D / WEBGL / SHADERS -->
+    <div class="section-header">
+      <h2>🌐 3D / WebGL / Shaders</h2>
+      <p>GPU-powered visuals — Three.js, GLSL, raymarching, particles</p>
+    </div>
+    <div class="grid">
+      <a href="./bubble-metaballs/" class="card">
+        <div class="card-body">
+          <h3>Bubble Metaballs</h3>
+          <p>GLSL raymarching, SDF smooth-min, Fresnel effects, mouse interaction</p>
+          <div class="tags"><span class="tag">GLSL</span><span class="tag">Raymarching</span><span class="tag">SDF</span></div>
+        </div>
+      </a>
+      <a href="./ohzi-interactive/" class="card">
+        <div class="card-body">
+          <h3>OHZI Interactive</h3>
+          <p>Cursor-driven GLSL shaders, particle systems, post-processing effects</p>
+          <div class="tags"><span class="tag">GLSL</span><span class="tag">Particles</span><span class="tag">Post-FX</span></div>
+        </div>
+      </a>
+      <a href="./bruno-simon/" class="card">
+        <div class="card-body">
+          <h3>Bruno Simon</h3>
+          <p>3D physics playground — drivable car, cannon-es physics, interactive world</p>
+          <div class="tags"><span class="tag">Three.js</span><span class="tag">Physics</span><span class="tag">Cannon-es</span></div>
+        </div>
+      </a>
+      <a href="./voxelized-physics/" class="card">
+        <div class="card-body">
+          <h3>Voxelized Physics</h3>
+          <p>Three.js + Rapier physics — voxelized 3D world with real-time physics</p>
+          <div class="tags"><span class="tag">Three.js</span><span class="tag">Rapier</span><span class="tag">Voxels</span></div>
+        </div>
+      </a>
+      <a href="./utsubo-expo/" class="card">
+        <div class="card-body">
+          <h3>Utsubo Expo</h3>
+          <p>Fluid particle simulation — 100k particles with bloom and post-processing</p>
+          <div class="tags"><span class="tag">Particles</span><span class="tag">Bloom</span><span class="tag">100k</span></div>
+        </div>
+      </a>
+      <a href="./immersive-garden/" class="card">
+        <div class="card-body">
+          <h3>Immersive Garden</h3>
+          <p>WebGL scroll-camera with shader transitions and cinematic storytelling</p>
+          <div class="tags"><span class="tag">WebGL</span><span class="tag">Shaders</span><span class="tag">Scroll Camera</span></div>
+        </div>
+      </a>
+      <a href="./gen-02-samsy/" class="card">
+        <div class="card-body">
+          <h3>Gen-02 Samsy</h3>
+          <p>Generative art installation — instanced geometry, data textures, procedural visuals</p>
+          <div class="tags"><span class="tag">Generative</span><span class="tag">Instanced</span><span class="tag">Data Textures</span></div>
+        </div>
+      </a>
+      <a href="./blended-shader/" class="card">
+        <div class="card-body">
+          <h3>Blended Shader</h3>
+          <p>GLSL material transitions — smooth blending between shader effects</p>
+          <div class="tags"><span class="tag">GLSL</span><span class="tag">Transitions</span><span class="tag">Materials</span></div>
+        </div>
+      </a>
+      <a href="./reactive-depth-tube/" class="card">
+        <div class="card-body">
+          <h3>Reactive Depth Tube</h3>
+          <p>3D image gallery with depth-reactive tube geometry</p>
+          <div class="tags"><span class="tag">Three.js</span><span class="tag">Depth</span><span class="tag">Gallery</span></div>
+        </div>
+      </a>
+      <a href="./wavy-carousels/" class="card">
+        <div class="card-body">
+          <h3>Wavy Carousels</h3>
+          <p>R3F infinite scroll with GLSL distortion and 3D curved layout</p>
+          <div class="tags"><span class="tag">R3F</span><span class="tag">GLSL</span><span class="tag">Infinite Scroll</span></div>
+        </div>
+      </a>
+    </div>
+
+    <!-- TYPOGRAPHY & TEXT -->
+    <div class="section-header">
+      <h2>✏️ Typography & Text Effects</h2>
+      <p>Kinetic type, text destruction, morphing, and scramble effects</p>
+    </div>
+    <div class="grid">
+      <a href="./kinetic-typography/" class="card">
+        <div class="card-body">
+          <h3>Kinetic Typography</h3>
+          <p>Physics-based text: gravity drop, scroll warp, magnetic repel, wave, explode/reform</p>
+          <div class="tags"><span class="tag">GSAP</span><span class="tag">ScrollTrigger</span><span class="tag">rAF</span></div>
+        </div>
+      </a>
       <a href="./text-morphing/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-textmorph">
-            <span class="morph-text" data-text="MORPH">MORPH</span>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">06</span>
-        </div>
         <div class="card-body">
           <h3>Text Morphing</h3>
-          <p>Cursor mask reveal, text scramble, typewriter, split text, and glitch effects</p>
-          <div class="card-tags">
-            <span class="tag">clip-path</span>
-            <span class="tag">GSAP</span>
-            <span class="tag">Text FX</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Cursor mask reveal, text scramble, typewriter, split text, glitch effects</p>
+          <div class="tags"><span class="tag">clip-path</span><span class="tag">GSAP</span><span class="tag">Text FX</span></div>
         </div>
       </a>
-
-      <!-- 07 Bento Grid -->
-      <a href="./bento-grid/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-bento">
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">07</span>
+      <a href="./text-destruction/" class="card">
+        <div class="card-body">
+          <h3>Text Destruction</h3>
+          <p>Particle text experiment — characters explode and reform</p>
+          <div class="tags"><span class="tag">Particles</span><span class="tag">Canvas</span><span class="tag">Physics</span></div>
         </div>
+      </a>
+      <a href="./neon-rated/" class="card">
+        <div class="card-body">
+          <h3>Neon Rated</h3>
+          <p>Cinematic dark mode, maximalist typography, neon glow, GSAP reveals</p>
+          <div class="tags"><span class="tag">Neon</span><span class="tag">Typography</span><span class="tag">GSAP</span></div>
+        </div>
+      </a>
+    </div>
+
+    <!-- SCROLL & LAYOUT -->
+    <div class="section-header">
+      <h2>📜 Scroll & Layout Experiments</h2>
+      <p>Scroll animations, parallax, grids, galleries, and layout techniques</p>
+    </div>
+    <div class="grid">
+      <a href="./parallax-scrollytelling/" class="card">
+        <div class="card-body">
+          <h3>Parallax Scrollytelling</h3>
+          <p>Multi-layer parallax narrative with pinned sections</p>
+          <div class="tags"><span class="tag">GSAP ScrollTrigger</span><span class="tag">Parallax</span></div>
+        </div>
+      </a>
+      <a href="./zajno-motion/" class="card">
+        <div class="card-body">
+          <h3>Zajno Motion</h3>
+          <p>GSAP ScrollTrigger showcase: pinning, motion paths, scroll-scrub, parallax, smooth transitions</p>
+          <div class="tags"><span class="tag">GSAP</span><span class="tag">Motion Paths</span><span class="tag">Scroll-Scrub</span></div>
+        </div>
+      </a>
+      <a href="./horizontal-gallery/" class="card">
+        <div class="card-body">
+          <h3>Horizontal Gallery</h3>
+          <p>Smooth horizontal scroll with 3D card transforms and staggered reveals</p>
+          <div class="tags"><span class="tag">CSS Scroll-Snap</span><span class="tag">Parallax</span></div>
+        </div>
+      </a>
+      <a href="./sticky-grid/" class="card">
+        <div class="card-body">
+          <h3>Sticky Grid</h3>
+          <p>CSS scroll-driven animated grid — zero JavaScript</p>
+          <div class="tags"><span class="tag">CSS Only</span><span class="tag">Scroll-Driven</span><span class="tag">Grid</span></div>
+        </div>
+      </a>
+      <a href="./bento-grid/" class="card">
         <div class="card-body">
           <h3>Bento Grid</h3>
-          <p>Asymmetric dashboard layout with animated cards, charts, and staggered reveal animations</p>
-          <div class="card-tags">
-            <span class="tag">CSS Grid</span>
-            <span class="tag">Motion</span>
-            <span class="tag">Stagger</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Asymmetric dashboard layout with animated cards, charts, and staggered reveals</p>
+          <div class="tags"><span class="tag">CSS Grid</span><span class="tag">Motion</span><span class="tag">Stagger</span></div>
         </div>
       </a>
-
-      <!-- 08 Liquid Glass -->
-      <a href="./liquid-glass/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-liquid">
-            <div class="blob"></div>
-            <div class="blob"></div>
-            <div class="blob"></div>
-            <div class="glass-card"></div>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">08</span>
+      <a href="./ascii-dithering/" class="card">
+        <div class="card-body">
+          <h3>ASCII Dithering</h3>
+          <p>WebGL shader tool for ASCII art dithering effects</p>
+          <div class="tags"><span class="tag">WebGL</span><span class="tag">Shader</span><span class="tag">ASCII</span></div>
         </div>
+      </a>
+      <a href="./pudding-motifs/" class="card">
+        <div class="card-body">
+          <h3>Pudding Motifs</h3>
+          <p>The Shape of Music — musical motifs visualized with interactive data</p>
+          <div class="tags"><span class="tag">Data Viz</span><span class="tag">SVG</span><span class="tag">Music</span></div>
+        </div>
+      </a>
+      <a href="./ponpon-mania/" class="card">
+        <div class="card-body">
+          <h3>Ponpon Mania</h3>
+          <p>WebGL interactive comic — playful, colorful, animated experience</p>
+          <div class="tags"><span class="tag">WebGL</span><span class="tag">Comic</span><span class="tag">Interactive</span></div>
+        </div>
+      </a>
+    </div>
+
+    <!-- VISUAL EFFECTS -->
+    <div class="section-header">
+      <h2>✨ Visual Effects & Interactions</h2>
+      <p>Cursor effects, glass, gradients, and micro-interactions</p>
+    </div>
+    <div class="grid">
+      <a href="./liquid-glass/" class="card">
         <div class="card-body">
           <h3>Liquid Glass</h3>
           <p>Glassmorphism with animated liquid blobs, frosted cards, SVG morphing, and cursor glow</p>
-          <div class="card-tags">
-            <span class="tag">backdrop-filter</span>
-            <span class="tag">SVG Morph</span>
-            <span class="tag">Motion</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="tags"><span class="tag">backdrop-filter</span><span class="tag">SVG Morph</span><span class="tag">Motion</span></div>
         </div>
       </a>
-
-      <!-- 09 Kinetic Typography -->
-      <a href="./kinetic-typography/" class="card">
-        <div class="card-preview">
-          <div class="preview-animation preview-kinetic">
-            <span>K</span><span>I</span><span>N</span><span>E</span><span>T</span><span>I</span><span>C</span>
-          </div>
-          <div class="preview-overlay"></div>
-          <span class="card-number">09</span>
-        </div>
+      <a href="./magnetic-cursor/" class="card">
         <div class="card-body">
-          <h3>Kinetic Typography</h3>
-          <p>Physics-based text with gravity drop, scroll warp, magnetic repel, wave, and explode effects</p>
-          <div class="card-tags">
-            <span class="tag">GSAP</span>
-            <span class="tag">ScrollTrigger</span>
-            <span class="tag">rAF</span>
-          </div>
-        </div>
-        <div class="card-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Magnetic Cursor</h3>
+          <p>Interactive magnetic cursor effects, glow grid, and particle trails</p>
+          <div class="tags"><span class="tag">Framer Motion</span><span class="tag">Physics</span></div>
         </div>
       </a>
-
+      <a href="./aurora/" class="card">
+        <div class="card-body">
+          <h3>Aurora</h3>
+          <p>Product landing page with animated gradients and scroll reveals</p>
+          <div class="tags"><span class="tag">GSAP</span><span class="tag">Gradients</span><span class="tag">Scroll</span></div>
+        </div>
+      </a>
+      <a href="./obsidian/" class="card">
+        <div class="card-body">
+          <h3>Obsidian</h3>
+          <p>Dark luxury theme with smooth scroll, cursor glow, testimonial carousel</p>
+          <div class="tags"><span class="tag">Framer Motion</span><span class="tag">Cursor FX</span></div>
+        </div>
+      </a>
     </div>
-  </section>
 
-  <footer class="footer">
-    <p>Built with curiosity &mdash; <a href="https://github.com/Subrising/design-lab" target="_blank">View Source</a></p>
+  </div>
+
+  <footer>
+    <p>Built with curiosity &mdash; <a href="https://github.com/Subrising/design-lab" target="_blank">View Source on GitHub</a></p>
   </footer>
 
-  <script>
-    // Cursor glow follow
-    const glow = document.getElementById('cursorGlow');
-    let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function animateGlow() {
-      glowX += (mouseX - glowX) * 0.08;
-      glowY += (mouseY - glowY) * 0.08;
-      glow.style.left = glowX + 'px';
-      glow.style.top = glowY + 'px';
-      requestAnimationFrame(animateGlow);
-    }
-    animateGlow();
-
-    // Intersection Observer for card reveal
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add('visible');
-          }, i * 80);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-    document.querySelectorAll('.card').forEach(card => observer.observe(card));
-
-    // Magnetic particles canvas for card 04
-    const canvas = document.getElementById('magneticCanvas');
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      canvas.width = 400;
-      canvas.height = 200;
-
-      const particles = [];
-      for (let i = 0; i < 40; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          r: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.5 + 0.2,
-        });
-      }
-
-      function drawParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach((p, i) => {
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(102, 126, 234, ${p.opacity})`;
-          ctx.fill();
-
-          // Draw connections
-          for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[j].x - p.x;
-            const dy = particles[j].y - p.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 80) {
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = `rgba(102, 126, 234, ${0.15 * (1 - dist / 80)})`;
-              ctx.stroke();
-            }
-          }
-        });
-
-        requestAnimationFrame(drawParticles);
-      }
-      drawParticles();
-    }
-  </script>
 </body>
 </html>
