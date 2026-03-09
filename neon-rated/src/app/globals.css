@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+@theme {
+  --color-neon-pink: #ff2d7b;
+  --color-neon-cyan: #00f0ff;
+  --color-neon-violet: #b347ea;
+  --color-neon-amber: #ffaa00;
+  --color-dark-900: #0a0a0c;
+  --color-dark-800: #111116;
+  --color-dark-700: #1a1a22;
+  --color-dark-600: #252530;
+  --font-display: "Inter", system-ui, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-dark-900);
+  color: #e0e0e8;
+  font-family: var(--font-display);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-neon-pink);
+  color: white;
+}
+
+/* Neon glow utility classes */
+.neon-glow-pink {
+  text-shadow:
+    0 0 7px var(--color-neon-pink),
+    0 0 20px var(--color-neon-pink),
+    0 0 42px rgba(255, 45, 123, 0.4),
+    0 0 82px rgba(255, 45, 123, 0.2);
+}
+
+.neon-glow-cyan {
+  text-shadow:
+    0 0 7px var(--color-neon-cyan),
+    0 0 20px var(--color-neon-cyan),
+    0 0 42px rgba(0, 240, 255, 0.4),
+    0 0 82px rgba(0, 240, 255, 0.2);
+}
+
+.neon-glow-violet {
+  text-shadow:
+    0 0 7px var(--color-neon-violet),
+    0 0 20px var(--color-neon-violet),
+    0 0 42px rgba(179, 71, 234, 0.4),
+    0 0 82px rgba(179, 71, 234, 0.2);
+}
+
+.neon-border-pink {
+  box-shadow:
+    0 0 5px var(--color-neon-pink),
+    0 0 15px rgba(255, 45, 123, 0.3),
+    inset 0 0 5px rgba(255, 45, 123, 0.1);
+}
+
+.neon-border-cyan {
+  box-shadow:
+    0 0 5px var(--color-neon-cyan),
+    0 0 15px rgba(0, 240, 255, 0.3),
+    inset 0 0 5px rgba(0, 240, 255, 0.1);
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+}
+
+.animated-gradient-bg {
+  background: linear-gradient(
+    -45deg,
+    var(--color-dark-900),
+    #1a0a2e,
+    #0d1b2a,
+    var(--color-dark-900),
+    #1a0020,
+    #0a1628
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Noise texture overlay */
+.noise-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-dark-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neon-pink);
+  border-radius: 3px;
+}
+
+/* Split text animation helper */
+.char-reveal {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.char-reveal span {
+  display: inline-block;
+}
+
+/* Horizontal rule neon */
+.neon-hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-neon-pink),
+    var(--color-neon-cyan),
+    var(--color-neon-violet),
+    transparent
+  );
+}
+
+/* Film grain effect */
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+.film-grain::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
