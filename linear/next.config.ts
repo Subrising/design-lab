@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/linear",
+  basePath: "/design-lab/linear",
   images: { unoptimized: true },
 };
 

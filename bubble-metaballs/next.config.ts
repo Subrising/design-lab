@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/bubble-metaballs",
+  basePath: "/design-lab/bubble-metaballs",
   images: { unoptimized: true },
 };
 

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/wavy-carousels",
+  basePath: "/design-lab/wavy-carousels",
   images: { unoptimized: true },
   turbopack: {
     rules: {
