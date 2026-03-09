@@ -68,7 +68,7 @@ export default function MorphNav() {
   const [morphRect, setMorphRect] = useState({ x: 0, width: 0 });
   const navRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   const handleEnter = useCallback((index: number) => {
     clearTimeout(timeoutRef.current);
