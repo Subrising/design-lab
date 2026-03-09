@@ -58,9 +58,9 @@ export default function ParticleField({ count, scrollProgress }: Props) {
   }, [positions, colors]);
 
   useFrame(({ clock }) => {
-    if (!pointsRef.current) return;
-    const geo = pointsRef.current.geometry;
-    const posAttr = geo.attributes.position as THREE.BufferAttribute;
+    if (!pointsRef.current || !geoRef.current) return;
+    const posAttr = geoRef.current.attributes.position as THREE.BufferAttribute;
+    if (!posAttr) return;
     const t = clock.getElapsedTime();
 
     for (let i = 0; i < count; i++) {
@@ -83,20 +83,7 @@ export default function ParticleField({ count, scrollProgress }: Props) {
 
   return (
     <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          count={count}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          array={colors}
-          count={count}
-          itemSize={3}
-        />
-      </bufferGeometry>
+      <bufferGeometry ref={geoRef} />
       <pointsMaterial
         size={0.03}
         vertexColors
