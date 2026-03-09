@@ -1,0 +1,583 @@
+@import "tailwindcss";
+
+/* ─── Base Reset ─── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto; /* Don't interfere with scroll-driven animations */
+}
+
+body {
+  background: #0a0a0a;
+  color: #f5f5f5;
+  font-family: var(--font-space), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ─── Scroll Runway ─── */
+/* The tall section creates the scroll distance that powers all animations */
+.scroll-runway {
+  height: 500vh;
+  position: relative;
+}
+
+/* ─── Sticky Stage ─── */
+/* Stays pinned to viewport while parent scrolls — the "canvas" for animations */
+.sticky-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Grid Layout ─── */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1rem;
+  width: 90vw;
+  height: 80vh;
+  padding: 1rem;
+  /* Bind animation to scroll progress of nearest scrollable ancestor */
+  animation-timeline: scroll();
+}
+
+/* ─── Grid Items Base ─── */
+.grid-item {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  will-change: transform, opacity;
+  /* Each item gets its own scroll-driven animation */
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay gradient on each card */
+.grid-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ─── Item Span Variations ─── */
+.grid-item--wide {
+  grid-column: span 2;
+}
+
+.grid-item--tall {
+  grid-row: span 2;
+}
+
+.grid-item--hero {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLL-DRIVEN ANIMATIONS — Pure CSS, Zero JS
+   ═══════════════════════════════════════════════════ */
+
+/* Phase 1: Grid items fly in from edges with scale + rotation */
+@keyframes reveal-from-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%) scale(0.6) rotate(-8deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-60%) scale(0.8) rotate(-4deg);
+  }
+}
+
+@keyframes reveal-from-right {
+  0% {
+    opacity: 0;
+    transform: translateX(120%) scale(0.6) rotate(8deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%) scale(0.8) rotate(4deg);
+  }
+}
+
+@keyframes reveal-from-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-120%) scale(0.6) rotate(-5deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60%) scale(0.8) rotate(-3deg);
+  }
+}
+
+@keyframes reveal-from-bottom {
+  0% {
+    opacity: 0;
+    transform: translateY(120%) scale(0.6) rotate(5deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(60%) scale(0.8) rotate(3deg);
+  }
+}
+
+@keyframes zoom-and-scatter {
+  0% {
+    opacity: 0;
+    transform: scale(2.5) rotate(0deg);
+    filter: blur(10px);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8) rotate(var(--scatter-rotate, 5deg));
+    filter: blur(6px);
+  }
+}
+
+@keyframes spiral-in {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(90deg);
+  }
+}
+
+/* ─── Assign Animations to Grid Items ─── */
+/* Column 1 items: fly in from left */
+.grid-item:nth-child(1),
+.grid-item:nth-child(5),
+.grid-item:nth-child(9) {
+  animation-name: reveal-from-left;
+  animation-duration: 1ms; /* required but overridden by timeline */
+}
+
+/* Column 4 items: fly in from right */
+.grid-item:nth-child(4),
+.grid-item:nth-child(8),
+.grid-item:nth-child(12) {
+  animation-name: reveal-from-right;
+  animation-duration: 1ms;
+}
+
+/* Row 1 items: fly in from top */
+.grid-item:nth-child(2),
+.grid-item:nth-child(3) {
+  animation-name: reveal-from-top;
+  animation-duration: 1ms;
+}
+
+/* Row 3 items: fly in from bottom */
+.grid-item:nth-child(10),
+.grid-item:nth-child(11) {
+  animation-name: reveal-from-bottom;
+  animation-duration: 1ms;
+}
+
+/* Center items: zoom effect */
+.grid-item:nth-child(6),
+.grid-item:nth-child(7) {
+  animation-name: zoom-and-scatter;
+  animation-duration: 1ms;
+  --scatter-rotate: -5deg;
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION 2: Different animation set
+   ═══════════════════════════════════════════════════ */
+
+.section-2 .grid-item {
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.section-2 .grid-item:nth-child(odd) {
+  animation-name: spiral-in;
+  animation-duration: 1ms;
+}
+
+.section-2 .grid-item:nth-child(even) {
+  animation-name: zoom-and-scatter;
+  animation-duration: 1ms;
+  --scatter-rotate: 8deg;
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION 3: Staggered cascade with CSS custom props
+   ═══════════════════════════════════════════════════ */
+
+@keyframes cascade-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(100px) scale(0.85) rotate(var(--cascade-rotate, 0deg));
+    filter: blur(4px);
+  }
+  calc(8% + var(--stagger-offset, 0) * 4%) {
+    opacity: 0;
+    transform: translateY(100px) scale(0.85) rotate(var(--cascade-rotate, 0deg));
+    filter: blur(4px);
+  }
+  calc(20% + var(--stagger-offset, 0) * 4%) {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px) scale(0.9) rotate(calc(var(--cascade-rotate, 0deg) * -1));
+    filter: blur(3px);
+  }
+}
+
+.section-3 .grid-item {
+  animation-name: cascade-reveal;
+  animation-duration: 1ms;
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: ease-in-out;
+}
+
+.section-3 .grid-item:nth-child(1) { --stagger-offset: 0; --cascade-rotate: -3deg; }
+.section-3 .grid-item:nth-child(2) { --stagger-offset: 1; --cascade-rotate: 2deg; }
+.section-3 .grid-item:nth-child(3) { --stagger-offset: 2; --cascade-rotate: -4deg; }
+.section-3 .grid-item:nth-child(4) { --stagger-offset: 3; --cascade-rotate: 3deg; }
+.section-3 .grid-item:nth-child(5) { --stagger-offset: 4; --cascade-rotate: -2deg; }
+.section-3 .grid-item:nth-child(6) { --stagger-offset: 5; --cascade-rotate: 5deg; }
+.section-3 .grid-item:nth-child(7) { --stagger-offset: 6; --cascade-rotate: -5deg; }
+.section-3 .grid-item:nth-child(8) { --stagger-offset: 7; --cascade-rotate: 2deg; }
+.section-3 .grid-item:nth-child(9) { --stagger-offset: 8; --cascade-rotate: -3deg; }
+.section-3 .grid-item:nth-child(10) { --stagger-offset: 9; --cascade-rotate: 4deg; }
+.section-3 .grid-item:nth-child(11) { --stagger-offset: 10; --cascade-rotate: -4deg; }
+.section-3 .grid-item:nth-child(12) { --stagger-offset: 11; --cascade-rotate: 3deg; }
+
+/* ═══════════════════════════════════════════════════
+   SECTION 4: Grid morph — items rearrange positions
+   ═══════════════════════════════════════════════════ */
+
+@keyframes morph-expand {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+    border-radius: 50%;
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+    border-radius: 1rem;
+  }
+  50% {
+    transform: scale(1.05);
+    border-radius: 0.5rem;
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1);
+    border-radius: 1rem;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+    border-radius: 50%;
+  }
+}
+
+@keyframes morph-flip {
+  0% {
+    opacity: 0;
+    transform: perspective(800px) rotateY(-90deg) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: perspective(800px) rotateY(0deg) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: perspective(800px) rotateY(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(800px) rotateY(90deg) scale(0.8);
+  }
+}
+
+.section-4 .grid-item {
+  animation-duration: 1ms;
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.section-4 .grid-item:nth-child(odd) {
+  animation-name: morph-expand;
+}
+
+.section-4 .grid-item:nth-child(even) {
+  animation-name: morph-flip;
+}
+
+/* ═══════════════════════════════════════════════════
+   CONTENT OVERLAYS — Title animations
+   ═══════════════════════════════════════════════════ */
+
+@keyframes title-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(4rem);
+    letter-spacing: 0.5em;
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: 0.02em;
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: 0.02em;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4rem);
+    letter-spacing: 0.3em;
+  }
+}
+
+.section-title {
+  position: absolute;
+  z-index: 20;
+  text-align: center;
+  pointer-events: none;
+  animation-name: title-reveal;
+  animation-duration: 1ms;
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── Glow effect behind titles ─── */
+.title-glow {
+  text-shadow:
+    0 0 40px rgba(168, 130, 255, 0.4),
+    0 0 80px rgba(168, 130, 255, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO + INTRO SECTION
+   ═══════════════════════════════════════════════════ */
+
+.intro-section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@keyframes hero-fade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+    filter: blur(8px);
+  }
+}
+
+.hero-content {
+  animation-name: hero-fade;
+  animation-duration: 1ms;
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-range: 0% 15%;
+}
+
+/* ═══════════════════════════════════════════════════
+   BACKGROUND GRADIENT SHIFT — scroll-linked
+   ═══════════════════════════════════════════════════ */
+
+@keyframes bg-shift {
+  0% { background-color: #0a0a0a; }
+  25% { background-color: #0d0a1a; }
+  50% { background-color: #0a1a14; }
+  75% { background-color: #1a0d0a; }
+  100% { background-color: #0a0a0a; }
+}
+
+body {
+  animation-name: bg-shift;
+  animation-duration: 1ms;
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: linear;
+}
+
+/* ═══════════════════════════════════════════════════
+   PROGRESS BAR — scroll indicator
+   ═══════════════════════════════════════════════════ */
+
+@keyframes progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #a882ff, #82deff, #ff82c8);
+  transform-origin: left;
+  z-index: 100;
+  animation-name: progress-grow;
+  animation-duration: 1ms;
+  animation-timeline: scroll();
+  animation-fill-mode: both;
+  animation-timing-function: linear;
+}
+
+/* ═══════════════════════════════════════════════════
+   CARD LABELS
+   ═══════════════════════════════════════════════════ */
+
+.card-label {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 10;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    gap: 0.75rem;
+    width: 95vw;
+    height: auto;
+    min-height: 80vh;
+  }
+
+  .grid-item--wide,
+  .grid-item--hero {
+    grid-column: span 2;
+  }
+
+  .grid-item--tall {
+    grid-row: span 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   UNSUPPORTED BROWSER FALLBACK
+   ═══════════════════════════════════════════════════ */
+
+@supports not (animation-timeline: scroll()) {
+  .grid-item,
+  .section-title,
+  .hero-content {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+}
