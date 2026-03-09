@@ -1,65 +1,92 @@
-import Image from "next/image";
+"use client";
+
+import HeroSection from "./components/HeroSection";
+import ProjectSection from "./components/ProjectSection";
+import FooterSection from "./components/FooterSection";
+import ScrollProgress from "./components/ScrollProgress";
+import SideNav from "./components/SideNav";
+import CinematicBars from "./components/CinematicBars";
+
+const projects = [
+  {
+    title: "Meridian",
+    subtitle: "A cinematic journey through light and architecture",
+    category: "Film",
+    year: "2025",
+    color: "#e8d5b7",
+    gradient:
+      "linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #533483 100%)",
+  },
+  {
+    title: "Nocturne",
+    subtitle: "Visual poetry of urban landscapes after dark",
+    category: "Photography",
+    year: "2024",
+    color: "#a8c5da",
+    gradient:
+      "linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 30%, #2d1b69 60%, #11001c 100%)",
+  },
+  {
+    title: "Terraform",
+    subtitle: "Reshaping reality through digital manipulation",
+    category: "Digital Art",
+    year: "2024",
+    color: "#c5e8b7",
+    gradient:
+      "linear-gradient(135deg, #0d1117 0%, #161b22 30%, #1f4037 60%, #99f2c8 100%)",
+  },
+  {
+    title: "Echoes",
+    subtitle: "Sound and vision collide in immersive installation",
+    category: "Installation",
+    year: "2023",
+    color: "#e8b7b7",
+    gradient:
+      "linear-gradient(135deg, #1a0000 0%, #2d0000 30%, #4a0e0e 60%, #7a1818 100%)",
+  },
+  {
+    title: "Parallax",
+    subtitle: "Multi-layered narratives in perpetual motion",
+    category: "Motion",
+    year: "2023",
+    color: "#d4b7e8",
+    gradient:
+      "linear-gradient(135deg, #0f0c29 0%, #302b63 30%, #24243e 60%, #1a1a2e 100%)",
+  },
+  {
+    title: "Synthesis",
+    subtitle: "Where analog craftsmanship meets digital precision",
+    category: "Mixed Media",
+    year: "2022",
+    color: "#e8dab7",
+    gradient:
+      "linear-gradient(135deg, #141e30 0%, #243b55 30%, #4b6584 60%, #141e30 100%)",
+  },
+];
+
+const totalSections = projects.length + 2; // hero + projects + footer
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <ScrollProgress />
+      <SideNav sectionCount={totalSections} />
+      <CinematicBars />
+      <div className="grain-overlay" />
+      <div className="vignette" />
+
+      <HeroSection />
+
+      {projects.map((project, i) => (
+        <ProjectSection
+          key={project.title}
+          {...project}
+          index={i}
+          total={projects.length}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      ))}
+
+      <FooterSection />
+    </>
   );
 }

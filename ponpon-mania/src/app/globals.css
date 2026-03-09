@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Libre Franklin";
+  src: url("https://fonts.gstatic.com/s/librefranklin/v14/jizOREhUaOsgO-eNyWFuyyM0JCBPbfKiCA.woff2")
+    format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: #fff5f0;
+  color: #171717;
+  font-family: "Libre Franklin", sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #f1abbd;
+  color: #171717;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff5f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f1abbd;
+  border-radius: 2px;
+}
+
+/* Lenis overrides */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
