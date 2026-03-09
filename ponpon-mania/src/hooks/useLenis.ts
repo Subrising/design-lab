@@ -16,11 +16,13 @@ export function useLenis(onScroll?: (data: LenisScrollData) => void) {
 
   const scrollCallback = useCallback(
     (lenis: Lenis) => {
+      // velocity and direction exist at runtime but aren't in the type defs
+      const l = lenis as unknown as Record<string, number>;
       onScroll?.({
         scroll: lenis.scroll,
         limit: lenis.limit,
-        velocity: lenis.velocity,
-        direction: lenis.direction,
+        velocity: l.velocity ?? 0,
+        direction: l.direction ?? 1,
         progress: lenis.progress,
       });
     },
