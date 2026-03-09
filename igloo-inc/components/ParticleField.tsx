@@ -45,6 +45,18 @@ export default function ParticleField({ count, scrollProgress }: Props) {
     return { positions, velocities, colors };
   }, [count]);
 
+  useEffect(() => {
+    if (!geoRef.current) return;
+    geoRef.current.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+    geoRef.current.setAttribute(
+      "color",
+      new THREE.BufferAttribute(colors, 3)
+    );
+  }, [positions, colors]);
+
   useFrame(({ clock }) => {
     if (!pointsRef.current) return;
     const geo = pointsRef.current.geometry;
