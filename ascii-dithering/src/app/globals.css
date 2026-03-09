@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  --green: #00ff41;
+  --green-dim: #00aa2a;
+  --bg: #050505;
+  --fg: #e0e0e0;
+  --muted: #333;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-green: var(--green);
+  --color-green-dim: var(--green-dim);
+  --color-muted: var(--muted);
+}
+
+* {
+  cursor: crosshair !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+}
+
+::selection {
+  background: var(--green);
+  color: var(--bg);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 2px;
+}
