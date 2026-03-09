@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #1C1D20;
+  --color-bg-light: #2A2B2F;
+  --color-accent: #B8B8B8;
+  --color-text: #E8E8E8;
+  --color-text-muted: #999999;
+  --color-highlight: #C9F24D;
+  --font-display: "PP Neue Montreal", system-ui, sans-serif;
+}
+
+/* Smooth scroll via Lenis */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+::selection {
+  background: var(--color-highlight);
+  color: var(--color-bg);
+}
+
+/* Text mask reveal */
+.mask-text {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.mask-text .word {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.mask-text.revealed .word {
+  transform: translateY(0);
+}
+
+/* Parallax image wrapper */
+.parallax-image-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+.parallax-image-wrapper img {
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* Magnetic button base */
+.magnetic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+}
+
+/* Horizontal scroll section */
+.horizontal-scroll-section {
+  overflow: hidden;
+}
+
+/* Rounded section divider */
+.rounded-divider {
+  position: relative;
+  height: 10vh;
+  background: var(--color-bg);
+  border-radius: 0 0 50% 50%;
+  z-index: 2;
+  margin-bottom: -1px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Link hover line animation */
+.hover-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-line::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-text);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.hover-line:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Stagger delays for children */
+.stagger-children > * {
+  --stagger: 0;
+  transition-delay: calc(var(--stagger) * 80ms);
+}

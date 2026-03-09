@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --clerk-primary: #6C47FF;
+  --clerk-primary-light: #8B6FFF;
+  --clerk-accent: #17CCFC;
+  --clerk-surface: #0A0A0F;
+  --clerk-surface-light: #131320;
+  --clerk-surface-card: #1A1A2E;
+  --clerk-border: rgba(108, 71, 255, 0.15);
+  --clerk-text: #EEEEF0;
+  --clerk-text-muted: #8B8B9E;
+}
+
+@theme inline {
+  --color-background: var(--clerk-surface);
+  --color-foreground: var(--clerk-text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--clerk-surface);
+  color: var(--clerk-text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--clerk-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--clerk-primary);
+  border-radius: 3px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #6C47FF, #17CCFC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-purple {
+  box-shadow: 0 0 40px rgba(108, 71, 255, 0.3), 0 0 80px rgba(108, 71, 255, 0.1);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 40px rgba(23, 204, 252, 0.3), 0 0 80px rgba(23, 204, 252, 0.1);
+}
+
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(108, 71, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108, 71, 255, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@keyframes border-rotate {
+  0% { --angle: 0deg; }
+  100% { --angle: 360deg; }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--clerk-surface-card), var(--clerk-surface-card)) padding-box,
+    conic-gradient(from var(--angle), #6C47FF, #17CCFC, #6C47FF) border-box;
+  animation: border-rotate 4s linear infinite;
+}
+
+@keyframes dash-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; filter: blur(20px); }
+  50% { opacity: 0.8; filter: blur(30px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes orb-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-orb {
+  animation: orb-drift 8s ease-in-out infinite;
+}

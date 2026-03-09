@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #0a0a0a;
+  --color-fg: #f5f0eb;
+  --color-accent: #c8ff00;
+  --color-muted: #666;
+}
+
+* {
+  cursor: none !important;
+}
+
+html {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+body {
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-bg);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.font-editorial {
+  font-family: "Times New Roman", "Georgia", serif;
+  font-style: italic;
+}
+
+.char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.word {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover::after {
+  opacity: 1;
+}
+
+.nav-overlay {
+  clip-path: circle(0% at calc(100% - 60px) 60px);
+  transition: clip-path 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.nav-overlay.open {
+  clip-path: circle(150% at calc(100% - 60px) 60px);
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}

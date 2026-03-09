@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-stripe-purple: #635bff;
+  --color-stripe-blue: #0a2540;
+  --color-stripe-cyan: #00d4ff;
+  --color-stripe-green: #7dd3a8;
+  --color-stripe-pink: #ff6772;
+  --color-stripe-orange: #ffbb00;
+  --color-stripe-light: #f6f9fc;
+  --color-stripe-dark: #0a2540;
+  --font-sans: "system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #0a2540;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* Stripe-style gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #635bff 0%, #00d4ff 50%, #7dd3a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a2540;
+}
+::-webkit-scrollbar-thumb {
+  background: #425466;
+  border-radius: 4px;
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+/* Payment card shimmer */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* Morph nav dropdown */
+.morph-dropdown {
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
+}
+
+/* Floating particles */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
+}
