@@ -274,3 +274,22 @@ body {
   .cursor-dot, .cursor-ring { display: none; }
   .service-item { grid-template-columns: 1fr; }
 }
+
+/* Mobile Responsive Enhanced */
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  .cursor-dot, .cursor-ring { display: none; }
+  .hero-title { font-size: 2.5rem; }
+  .service-item { grid-template-columns: 1fr; gap: 1rem; }
+  .project-grid { grid-template-columns: 1fr; }
+  .section-padding { padding: 3rem 1rem; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .mobile-menu-toggle { display: block; }
+  .team-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+@media (max-width: 480px) {
+  .hero-title { font-size: 2rem; }
+  .team-grid { grid-template-columns: 1fr; }
+}

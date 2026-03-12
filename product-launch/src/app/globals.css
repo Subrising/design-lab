@@ -308,3 +308,21 @@ body {
     height: 400px;
   }
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .top-nav { padding: 0.75rem 1rem; font-size: 0.8rem; }
+  .section-full { padding: 2rem 1rem; }
+  .feature-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .feature-card { padding: 1.5rem; }
+  .horizontal-card { width: 85vw; height: 350px; }
+  .product-3d, .product-image { width: 90vw; max-width: 320px; height: auto; max-height: 60vh; }
+  .cta-button { padding: 0.8rem 1.5rem; font-size: 0.95rem; }
+  .spec-value { font-size: 2rem; }
+  .light-section { padding: 3rem 1rem; }
+}
+@media (max-width: 480px) {
+  .headline-large { font-size: 2.2rem; }
+  .headline-medium { font-size: 1.5rem; }
+  .body-large { font-size: 0.95rem; }
+}

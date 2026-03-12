@@ -247,3 +247,20 @@ body {
   .story-progress { display: none; }
   .cinema-bars::before, .cinema-bars::after { height: 30px; }
 }
+
+/* Mobile Responsive Enhanced */
+@media (max-width: 768px) {
+  .story-progress { display: none; }
+  .cinema-bars::before, .cinema-bars::after { height: 20px; }
+  .chapter-title { font-size: 2rem; }
+  .chapter-text { font-size: 1rem; padding: 0 1rem; }
+  .story-section { padding: 2rem 1rem; }
+  .parallax-text { font-size: 1.8rem; }
+  .story-nav { padding: 0.5rem 1rem; }
+  .reveal-content { padding: 1rem; }
+  .gallery-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .chapter-title { font-size: 1.5rem; }
+  .parallax-text { font-size: 1.3rem; }
+}
