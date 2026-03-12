@@ -32,7 +32,7 @@ jobs:
           # Auto-discover ALL experiments (any dir with package.json, excluding landing/references)
           for dir in */; do
             dir="${dir%/}"
-            if [ "$dir" = "landing" ] || [ "$dir" = "references" ] || [ "$dir" = "node_modules" ] || [ "$dir" = ".github" ]; then
+            if [ "$dir" = "landing" ] || [ "$dir" = "landing-app" ] || [ "$dir" = "references" ] || [ "$dir" = "node_modules" ] || [ "$dir" = ".github" ]; then
               continue
             fi
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
@@ -69,8 +69,23 @@ jobs:
             fi
           done
           
-          # Copy landing page
-          if [ -f "landing/index.html" ]; then
+          # Build landing-app (Next.js static export)
+          echo "Building landing-app..."
+          if [ -d "landing-app" ] && [ -f "landing-app/package.json" ]; then
+            cd landing-app
+            npm ci --legacy-peer-deps 2>/dev/null || npm install --legacy-peer-deps
+            npm run build
+            if [ -d "out" ]; then
+              cp -r out/* ../_site/
+              echo "✅ landing-app built"
+            else
+              echo "❌ landing-app failed, falling back to static landing"
+              if [ -f "../landing/index.html" ]; then
+                cp ../landing/index.html ../_site/index.html
+              fi
+            fi
+            cd ..
+          elif [ -f "landing/index.html" ]; then
             cp landing/index.html _site/index.html
           fi
           
