@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/lusion",
+  basePath: "/design-lab/lusion",
   images: { unoptimized: true },
 };
 

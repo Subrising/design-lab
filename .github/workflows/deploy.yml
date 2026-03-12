@@ -29,10 +29,33 @@ jobs:
           mkdir -p _site
           touch _site/.nojekyll
           
-          # Build each project as static export
-          for dir in apple-scroll ascii-dithering aurora bento-grid blended-shader britive bruno-simon bubble-metaballs cartier-watches clerk creative-studio dark-machine dennis-snellenberg fashion-runway gen-02-samsy horizontal-gallery igloo-inc immersive-garden immersive-story jason-bergh kinetic-typography lando-norris linear liquid-glass magnetic-cursor messenger-meta mindmarket neon-rated obsidian ohzi-interactive parallax-scrollytelling ponpon-mania product-launch pudding-motifs raycast reactive-depth-tube sticky-grid stripe studio-dialect text-destruction text-morphing unseen-studio utsubo-expo voxelized-physics wavy-carousels zajno-motion ; do
+          # Auto-discover ALL experiments (any dir with package.json, excluding landing/references)
+          for dir in */; do
+            dir="${dir%/}"
+            if [ "$dir" = "landing" ] || [ "$dir" = "references" ] || [ "$dir" = "node_modules" ] || [ "$dir" = ".github" ]; then
+              continue
+            fi
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Building $dir..."
+              
+              # Ensure next.config has correct basePath
+              if [ -f "$dir/next.config.ts" ]; then
+                if ! grep -q "design-lab/$dir" "$dir/next.config.ts"; then
+                  echo "⚠️  Fixing basePath for $dir"
+                  sed -i "s|basePath: \"/$dir\"|basePath: \"/design-lab/$dir\"|" "$dir/next.config.ts"
+                fi
+                if ! grep -q 'output.*export' "$dir/next.config.ts"; then
+                  echo "⚠️  Adding output:export for $dir"
+                  sed -i 's|const nextConfig: NextConfig = {|const nextConfig: NextConfig = {\n  output: "export",\n  images: { unoptimized: true },|' "$dir/next.config.ts"
+                fi
+              fi
+              
+              # Ensure build script exists
+              if ! grep -q '"build"' "$dir/package.json"; then
+                echo "⚠️  Adding build script for $dir"
+                sed -i 's|"scripts": {|"scripts": {\n    "build": "next build",|' "$dir/package.json"
+              fi
+              
               cd "$dir"
               npm ci --legacy-peer-deps 2>/dev/null || npm install --legacy-peer-deps
               npm run build || true
@@ -47,7 +70,14 @@ jobs:
           done
           
           # Copy landing page
-          cp landing/index.html _site/index.html
+          if [ -f "landing/index.html" ]; then
+            cp landing/index.html _site/index.html
+          fi
+          
+          # Summary
+          echo ""
+          echo "=== Build Summary ==="
+          echo "Total deployed: $(ls -d _site/*/ 2>/dev/null | wc -l) experiments"
 
       - uses: actions/upload-pages-artifact@v3
         with:

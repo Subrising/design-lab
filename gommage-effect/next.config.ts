@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "",
+  basePath: "/design-lab/gommage-effect",
   images: { unoptimized: true },
   turbopack: {},
 };

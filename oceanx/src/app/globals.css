@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+:root {
+  --ocean-deep: #020b1a;
+  --ocean-mid: #041e3a;
+  --ocean-light: #0a3d5c;
+  --biolum-cyan: #00f5d4;
+  --biolum-blue: #00bbf9;
+  --biolum-purple: #9b5de5;
+  --biolum-pink: #f15bb5;
+  --biolum-green: #00f093;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  background: var(--ocean-deep);
+  color: #e0f0ff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  scroll-behavior: auto;
+}
+
+body {
+  overflow-y: auto;
+}
+
+::selection {
+  background: rgba(0, 245, 212, 0.3);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ocean-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 212, 0.3);
+  border-radius: 3px;
+}
+
+.horizontal-section {
+  display: flex;
+  flex-wrap: nowrap;
+  width: fit-content;
+}
+
+.panel {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; filter: blur(20px); }
+  50% { opacity: 0.8; filter: blur(30px); }
+}
+
+@keyframes drift {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(10px) translateY(-5px); }
+  50% { transform: translateX(-5px) translateY(-10px); }
+  75% { transform: translateX(-10px) translateY(5px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+.animate-drift { animation: drift 15s ease-in-out infinite; }
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 245, 212, 0.5), 0 0 40px rgba(0, 245, 212, 0.2);
+}
+
+.depth-indicator {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.depth-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 245, 212, 0.3);
+  transition: all 0.5s ease;
+}
+
+.depth-dot.active {
+  background: var(--biolum-cyan);
+  box-shadow: 0 0 10px var(--biolum-cyan);
+  transform: scale(1.5);
+}

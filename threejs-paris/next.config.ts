@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "",
+  basePath: "/design-lab/threejs-paris",
   images: { unoptimized: true },
 };
 

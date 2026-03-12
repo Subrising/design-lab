@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVG Mask Scroll Gallery</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #000;
+    overflow-x: hidden;
+  }
+
+  /* ── Gallery: tall container drives scroll, viewport is sticky ── */
+  .gallery {
+    position: relative;
+    /* height set by JS: (slideCount - 1) * scrollPerTransition + 100vh */
+  }
+
+  .gallery__viewport {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  /* ── Slides stack on top of each other ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* slides 2-N start masked to nothing via JS */
+  }
+
+  .slide--1 { background: linear-gradient(135deg, #0f0c29 0%, #302b63 60%, #24243e 100%); z-index: 1; }
+  .slide--2 { background: linear-gradient(135deg, #093028 0%, #237a57 100%);              z-index: 2; }
+  .slide--3 { background: linear-gradient(135deg, #6a0000 0%, #c0392b 60%, #e0703a 100%); z-index: 3; }
+  .slide--4 { background: linear-gradient(135deg, #0d1b2a 0%, #1b4f72 60%, #2e86c1 100%); z-index: 4; }
+  .slide--5 { background: linear-gradient(135deg, #3e1f00 0%, #b8860b 60%, #f0c040 100%); z-index: 5; }
+
+  /* ── Text ── */
+  .slide__content {
+    text-align: center;
+    color: #fff;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .slide__label {
+    font-size: clamp(0.6rem, 1.1vw, 0.8rem);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-bottom: 1.25rem;
+  }
+
+  .slide__title {
+    font-size: clamp(3.5rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    opacity: 0.88;
+  }
+
+  .slide__sub {
+    margin-top: 1.75rem;
+    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.3;
+  }
+
+  /* ── Progress dots ── */
+  .progress {
+    position: fixed;
+    right: 1.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    z-index: 999;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .dot.is-active { background: #fff; transform: scale(1.8); }
+
+  /* ── Pattern tag ── */
+  .tag {
+    position: fixed;
+    top: 1.75rem;
+    right: 1.75rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    z-index: 999;
+    transition: opacity 0.4s;
+  }
+
+  /* ── Scroll hint ── */
+  .hint {
+    position: fixed;
+    bottom: 1.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    z-index: 999;
+    animation: nudge 2s ease-in-out infinite;
+    transition: opacity 0.5s;
+  }
+  @keyframes nudge {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-5px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Invisible SVG housing all mask definitions. Must be in DOM. -->
+<svg id="svg-defs"
+     xmlns="http://www.w3.org/2000/svg"
+     style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none"
+     aria-hidden="true">
+  <defs id="mask-defs"></defs>
+</svg>
+
+<!-- UI chrome -->
+<nav class="progress" id="progress"></nav>
+<div class="tag" id="tag"></div>
+<div class="hint" id="hint">scroll</div>
+
+<!-- Gallery -->
+<div class="gallery" id="gallery">
+  <div class="gallery__viewport" id="viewport">
+
+    <div class="slide slide--1" data-index="0">
+      <div class="slide__content">
+        <p class="slide__label">SVG Mask Gallery</p>
+        <h2 class="slide__title">Grid<br>Wipe</h2>
+        <p class="slide__sub">8 × 6 cell diagonal burst</p>
+      </div>
+    </div>
+
+    <div class="slide slide--2" data-index="1">
+      <div class="slide__content">
+        <p class="slide__label">Pattern 01</p>
+        <h2 class="slide__title">Hori&shy;zontal<br>Blinds</h2>
+        <p class="slide__sub">strips from edges inward</p>
+      </div>
+    </div>
+
+    <div class="slide slide--3" data-index="2">
+      <div class="slide__content">
+        <p class="slide__label">Pattern 02</p>
+        <h2 class="slide__title">Vertical<br>Blinds</h2>
+        <p class="slide__sub">columns from center out</p>
+      </div>
+    </div>
+
+    <div class="slide slide--4" data-index="3">
+      <div class="slide__content">
+        <p class="slide__label">Pattern 03</p>
+        <h2 class="slide__title">Diagonal<br>Sweep</h2>
+        <p class="slide__sub">angled parallelogram wipe</p>
+      </div>
+    </div>
+
+    <div class="slide slide--5" data-index="4">
+      <div class="slide__content">
+        <p class="slide__label">Pattern 04</p>
+        <h2 class="slide__title">Radial<br>Burst</h2>
+        <p class="slide__sub">circles expanding on grid</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ──────────────────────────────────────────────────────────────
+   MASK GENERATORS
+   Each receives the <mask> element and returns a paused GSAP
+   timeline that animates from "nothing visible" to "fully open".
+
+   Coordinates use objectBoundingBox units (0.0 – 1.0),
+   so masks stretch with the element regardless of viewport size.
+────────────────────────────────────────────────────────────── */
+
+const NS = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs = {}) {
+  const e = document.createElementNS(NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+  return e;
+}
+
+/* ── 1. GRID WIPE ────────────────────────────────────────────
+   8×6 rectangles, each scaling from 0 to 1 at their centre,
+   staggered diagonally (top-left → bottom-right).             */
+function gridWipe(maskEl) {
+  const COLS = 8, ROWS = 6;
+  const cw = 1 / COLS, ch = 1 / ROWS;
+  const cells = [];
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cx = (c + 0.5) * cw;
+      const cy = (r + 0.5) * ch;
+      const rect = el('rect', {
+        x: c * cw, y: r * ch, width: cw, height: ch, fill: 'white'
+      });
+      gsap.set(rect, { scale: 0, transformOrigin: `${cx * 100}% ${cy * 100}%` });
+      maskEl.appendChild(rect);
+      cells.push({ rect, diag: c + r });
+    }
+  }
+
+  // Sort by diagonal index for correct stagger order
+  cells.sort((a, b) => a.diag - b.diag);
+
+  const tl = gsap.timeline({ paused: true });
+  tl.to(cells.map(d => d.rect), {
+    scale: 1,
+    duration: 1,
+    ease: 'back.out(1.2)',
+    stagger: { each: 0.05 }
+  });
+  return tl;
+}
+
+/* ── 2. HORIZONTAL BLINDS ────────────────────────────────────
+   10 horizontal strips that expand vertically, from edges
+   converging to the centre.                                   */
+function horizontalBlinds(maskEl) {
+  const COUNT = 10;
+  const ch = 1 / COUNT;
+  const strips = [];
+
+  for (let i = 0; i < COUNT; i++) {
+    const cy = (i + 0.5) * ch;
+    const rect = el('rect', {
+      x: 0, y: i * ch, width: 1, height: ch, fill: 'white'
+    });
+    gsap.set(rect, { scaleY: 0, transformOrigin: `50% ${cy * 100}%` });
+    maskEl.appendChild(rect);
+    strips.push(rect);
+  }
+
+  const tl = gsap.timeline({ paused: true });
+  tl.to(strips, {
+    scaleY: 1,
+    duration: 1,
+    ease: 'expo.inOut',
+    stagger: { each: 0.045, from: 'edges' }
+  });
+  return tl;
+}
+
+/* ── 3. VERTICAL BLINDS ──────────────────────────────────────
+   12 vertical strips expanding horizontally, from centre out. */
+function verticalBlinds(maskEl) {
+  const COUNT = 12;
+  const cw = 1 / COUNT;
+  const strips = [];
+
+  for (let i = 0; i < COUNT; i++) {
+    const cx = (i + 0.5) * cw;
+    const rect = el('rect', {
+      x: i * cw, y: 0, width: cw, height: 1, fill: 'white'
+    });
+    gsap.set(rect, { scaleX: 0, transformOrigin: `${cx * 100}% 50%` });
+    maskEl.appendChild(rect);
+    strips.push(rect);
+  }
+
+  const tl = gsap.timeline({ paused: true });
+  tl.to(strips, {
+    scaleX: 1,
+    duration: 1,
+    ease: 'power3.inOut',
+    stagger: { each: 0.05, from: 'center' }
+  });
+  return tl;
+}
+
+/* ── 4. DIAGONAL SWEEP ───────────────────────────────────────
+   A parallelogram wipes left-to-right across the frame.
+   skew = 0.15 in objectBoundingBox units (15% of width).
+   We animate the polygon points via a proxy object.           */
+function diagonalSweep(maskEl) {
+  const skew = 0.12; // horizontal skew in OBB units
+  const poly = el('polygon', { fill: 'white' });
+  maskEl.appendChild(poly);
+
+  function setPoints(x) {
+    // Parallelogram: top edge goes left-to-right, bottom edge offset by skew
+    poly.setAttribute('points', [
+      `${x},0`,
+      `${x + 1},0`,
+      `${x + 1 + skew},1`,
+      `${x + skew},1`
+    ].join(' '));
+  }
+
+  const proxy = { x: -(1 + skew * 2) }; // fully off-screen left
+  setPoints(proxy.x);
+
+  const tl = gsap.timeline({ paused: true });
+  tl.to(proxy, {
+    x: 0,
+    duration: 1,
+    ease: 'power2.inOut',
+    onUpdate() { setPoints(proxy.x); }
+  });
+  return tl;
+}
+
+/* ── 5. RADIAL BURST ─────────────────────────────────────────
+   16 circles arranged in a 4×4 grid with slight jitter,
+   each expanding from r=0 to overlap neighbours fully.       */
+function radialBurst(maskEl) {
+  // Seeded pseudo-random for reproducible jitter
+  let seed = 42;
+  const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+
+  const COLS = 4, ROWS = 4;
+  const circles = [];
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const jx = (rand() - 0.5) * 0.06;
+      const jy = (rand() - 0.5) * 0.06;
+      const cx = (c + 0.5) / COLS + jx;
+      const cy = (r + 0.5) / ROWS + jy;
+      const circle = el('circle', { cx, cy, r: 0, fill: 'white' });
+      maskEl.appendChild(circle);
+      circles.push(circle);
+    }
+  }
+
+  const tl = gsap.timeline({ paused: true });
+  // r = 0.45 fully overlaps neighbours in a 4×4 grid
+  tl.to(circles, {
+    attr: { r: 0.45 },
+    duration: 1,
+    ease: 'power1.inOut',
+    stagger: { each: 0.04, from: 'random', seed: 7 }
+  });
+  return tl;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SETUP
+────────────────────────────────────────────────────────────── */
+
+const PATTERNS     = ['Grid Wipe', 'H. Blinds', 'V. Blinds', 'Diagonal Sweep', 'Radial Burst'];
+const GENERATORS   = [gridWipe, horizontalBlinds, verticalBlinds, diagonalSweep, radialBurst];
+const SCROLL_EACH  = window.innerHeight * 1.5; // 150vh scroll per transition
+
+const slides       = [...document.querySelectorAll('.slide')];
+const maskDefs     = document.getElementById('mask-defs');
+const gallery      = document.getElementById('gallery');
+const progressEl   = document.getElementById('progress');
+const tagEl        = document.getElementById('tag');
+const hintEl       = document.getElementById('hint');
+
+// Set gallery height
+gallery.style.height = `${(slides.length - 1) * SCROLL_EACH + window.innerHeight}px`;
+
+// Build progress dots
+const dots = slides.map((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' is-active' : '');
+  d.onclick = () => window.scrollTo({ top: i * SCROLL_EACH, behavior: 'smooth' });
+  progressEl.appendChild(d);
+  return d;
+});
+
+// Create masks and ScrollTriggers for slides 1-4
+slides.forEach((slide, i) => {
+  if (i === 0) return;
+
+  const maskId = `mask-${i}`;
+
+  // Create mask element with objectBoundingBox coordinates
+  const mask = document.createElementNS(NS, 'mask');
+  mask.id = maskId;
+  mask.setAttribute('maskUnits', 'objectBoundingBox');
+  mask.setAttribute('maskContentUnits', 'objectBoundingBox');
+  maskDefs.appendChild(mask);
+
+  // Generate mask shapes and get a paused timeline
+  const tl = GENERATORS[i - 1](mask);
+
+  // Apply mask to slide via CSS
+  slide.style.mask = `url(#${maskId})`;
+  slide.style.webkitMask = `url(#${maskId})`;
+
+  // Initialise: progress to 0 (fully hidden)
+  tl.progress(0);
+
+  // ScrollTrigger for this transition
+  const scrollStart = (i - 1) * SCROLL_EACH;
+  const scrollEnd   = i * SCROLL_EACH;
+
+  ScrollTrigger.create({
+    trigger: 'body',
+    start: () => `+=${scrollStart}`,
+    end:   () => `+=${scrollEnd}`,
+    scrub: 1.4,
+    onUpdate(self) {
+      tl.progress(self.progress);
+    },
+    onEnter() {
+      tagEl.textContent = PATTERNS[i];
+    },
+    onLeaveBack() {
+      tagEl.textContent = i > 1 ? PATTERNS[i - 1] : PATTERNS[0];
+    }
+  });
+});
+
+// First tag
+tagEl.textContent = PATTERNS[0];
+
+// Active dot tracker
+ScrollTrigger.create({
+  trigger: 'body',
+  start: 'top top',
+  end: 'bottom bottom',
+  onUpdate(self) {
+    const idx = Math.min(
+      slides.length - 1,
+      Math.floor(self.progress * slides.length + 0.0001)
+    );
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+  }
+});
+
+// Hint fade on first scroll
+let hinted = false;
+window.addEventListener('scroll', () => {
+  if (hinted) return;
+  if (window.scrollY > 60) { hintEl.style.opacity = '0'; hinted = true; }
+}, { passive: true });
+
+</script>
+</body>
+</html>

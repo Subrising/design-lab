@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0a0a0f;
+  --bg-secondary: #12121a;
+  --surface: #1a1a2e;
+  --border: #2a2a40;
+  --text: #e8e8f0;
+  --text-muted: #8888aa;
+  --accent: #7b61ff;
+  --accent-glow: #9b7dff;
+  --accent-secondary: #ff6b9d;
+  --accent-tertiary: #00d4aa;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-accent: var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
+  --color-surface: var(--surface);
+  --color-border-custom: var(--border);
+  --color-text-muted: var(--text-muted);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(123, 97, 255, 0.3);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(123, 97, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(123, 97, 255, 0.6); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7b61ff, #ff6b9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-2 {
+  background: linear-gradient(135deg, #00d4aa, #7b61ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-3 {
+  background: linear-gradient(135deg, #ff6b9d, #ffb347);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-border {
+  border: 1px solid var(--border);
+  box-shadow: 0 0 15px rgba(123, 97, 255, 0.1);
+  transition: box-shadow 0.3s;
+}
+
+.glow-border:hover {
+  box-shadow: 0 0 30px rgba(123, 97, 255, 0.3);
+}
