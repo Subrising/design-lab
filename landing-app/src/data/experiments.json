@@ -1,5 +1,17 @@
 [
   {
+    "slug": "tradie-dashboard",
+    "title": "Tradie Dashboard",
+    "description": "Dark-mode lead management dashboard for tradies with animated cards, pipeline funnel, and live conversion chart",
+    "category": "ui-component",
+    "tags": [
+      "Dashboard",
+      "Vanilla JS",
+      "CSS Animation"
+    ],
+    "url": "/design-lab/tradie-dashboard/"
+  },
+  {
     "slug": "creative-studio",
     "title": "Void Studio",
     "description": "Creative studio portfolio with WebGL effects and immersive interactions",

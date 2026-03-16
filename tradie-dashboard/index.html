@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradieCore — Lead Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-0: #08080a;
+      --bg-1: #0e0e12;
+      --bg-2: #141419;
+      --bg-3: #1a1a21;
+      --border: #2a2a35;
+      --border-dim: #1e1e27;
+      --orange: #f97316;
+      --amber: #f59e0b;
+      --yellow: #fbbf24;
+      --orange-glow: rgba(249,115,22,0.18);
+      --amber-glow: rgba(245,158,11,0.12);
+      --text-0: #f2ede4;
+      --text-1: #a8a098;
+      --text-2: #5e5a54;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --red: #ef4444;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-0);
+      color: var(--text-0);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── AMBIENT GLOW ── */
+    .ambient {
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 24px;
+      border-bottom: 1px solid var(--border-dim);
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 18px;
+      color: #000;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-0);
+    }
+
+    .logo-text span {
+      color: var(--orange);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse-green 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-green {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ── NOTIFICATION BELL ── */
+    .bell-wrap {
+      position: relative;
+    }
+
+    .bell-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      color: var(--text-1);
+      position: relative;
+    }
+
+    .bell-btn:hover {
+      background: var(--bg-3);
+      border-color: var(--orange);
+      color: var(--text-0);
+    }
+
+    .bell-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 18px;
+      height: 18px;
+      background: var(--orange);
+      border-radius: 50%;
+      border: 2px solid var(--bg-0);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .bell-icon {
+      font-size: 16px;
+      display: block;
+      animation: bell-ring 6s ease-in-out infinite;
+      transform-origin: top center;
+    }
+
+    @keyframes bell-ring {
+      0%, 85%, 100% { transform: rotate(0deg); }
+      88% { transform: rotate(15deg); }
+      92% { transform: rotate(-12deg); }
+      96% { transform: rotate(8deg); }
+      98% { transform: rotate(-5deg); }
+    }
+
+    .notif-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 300px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 100;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    .notif-panel.open { display: block; animation: slide-down 0.2s ease; }
+
+    @keyframes slide-down {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notif-header {
+      padding: 14px 16px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .notif-header h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-0);
+    }
+
+    .notif-clear {
+      font-size: 11px;
+      color: var(--orange);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-dim);
+      display: flex;
+      gap: 10px;
+    }
+
+    .notif-item:last-child { border-bottom: none; }
+
+    .notif-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .notif-dot.orange { background: var(--orange); }
+    .notif-dot.green { background: var(--green); }
+    .notif-dot.blue { background: var(--blue); }
+
+    .notif-text {
+      font-size: 12px;
+      color: var(--text-1);
+      line-height: 1.5;
+    }
+
+    .notif-text strong { color: var(--text-0); }
+    .notif-time { font-size: 10px; color: var(--text-2); margin-top: 2px; font-family: var(--font-mono); }
+
+    /* ── AVATAR ── */
+    .avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #f97316, #f59e0b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: #000;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      padding: 28px 0 24px;
+    }
+
+    .page-title h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(28px, 5vw, 42px);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .page-title h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
+
+    .page-title p {
+      color: var(--text-1);
+      font-size: 14px;
+      margin-top: 6px;
+      font-weight: 300;
+    }
+
+    .page-title p span {
+      color: var(--amber);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    /* ── STATS GRID ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ── GRADIENT BORDER CARD ── */
+    .stat-card {
+      position: relative;
+      background: var(--bg-2);
+      border-radius: 14px;
+      padding: 22px 20px 18px;
+      overflow: visible;
+      cursor: default;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: -1.5px;
+      border-radius: 15.5px;
+      background: conic-gradient(
+        from var(--angle),
+        var(--orange) 0%,
+        var(--amber) 15%,
+        #2a2a35 30%,
+        #2a2a35 70%,
+        var(--amber) 85%,
+        var(--orange) 100%
+      );
+      z-index: -1;
+      animation: spin-border calc(var(--speed, 5s)) linear infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      background: var(--bg-2);
+      z-index: -1;
+    }
+
+    @keyframes spin-border {
+      to { --angle: 360deg; }
+    }
+
+    .stat-card:nth-child(1) { --speed: 5s; --delay: 0s; }
+    .stat-card:nth-child(2) { --speed: 6s; --delay: -1.5s; }
+    .stat-card:nth-child(3) { --speed: 4.5s; --delay: -3s; }
+    .stat-card:nth-child(4) { --speed: 7s; --delay: -2s; }
+
+    .stat-label {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-label svg {
+      width: 14px;
+      height: 14px;
+      color: var(--orange);
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: clamp(28px, 4vw, 40px);
+      color: var(--text-0);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .stat-value em {
+      font-style: normal;
+      font-size: 0.5em;
+      color: var(--text-1);
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .stat-delta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--font-mono);
+    }
+
+    .stat-delta.up { color: var(--green); }
+    .stat-delta.down { color: var(--red); }
+    .stat-delta.neutral { color: var(--text-2); }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    .stat-glow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: radial-gradient(ellipse at 50% 120%, var(--orange-glow), transparent 70%);
+      border-radius: 0 0 14px 14px;
+      pointer-events: none;
+    }
+
+    /* ── BOTTOM GRID ── */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+
+    /* ── SECTION CARD ── */
+    .section-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border-dim);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-0);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 14px;
+      background: linear-gradient(to bottom, var(--orange), var(--amber));
+      border-radius: 2px;
+    }
+
+    .section-action {
+      font-size: 11px;
+      color: var(--orange);
+      cursor: pointer;
+      font-weight: 500;
+      font-family: var(--font-body);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .section-action:hover { opacity: 0.7; }
+
+    /* ── LEADS TABLE ── */
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leads-table thead th {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      padding: 10px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-dim);
+      background: var(--bg-1);
+    }
+
+    .leads-table tbody tr {
+      border-bottom: 1px solid var(--border-dim);
+      transition: background 0.15s;
+      cursor: pointer;
+      animation: row-enter 0.4s ease both;
+    }
+
+    .leads-table tbody tr:last-child { border-bottom: none; }
+
+    .leads-table tbody tr:hover { background: rgba(249,115,22,0.04); }
+
+    @keyframes row-enter {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .leads-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+    .leads-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+    .leads-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+    .leads-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+    .leads-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+    .leads-table tbody tr:nth-child(6) { animation-delay: 0.3s; }
+    .leads-table tbody tr:nth-child(7) { animation-delay: 0.35s; }
+
+    .leads-table td {
+      padding: 13px 20px;
+      font-size: 13px;
+      color: var(--text-1);
+      vertical-align: middle;
+    }
+
+    .lead-name {
+      font-weight: 600;
+      color: var(--text-0);
+      font-size: 13px;
+    }
+
+    .lead-service {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 2px;
+      font-family: var(--font-mono);
+    }
+
+    .lead-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--amber);
+      font-size: 13px;
+    }
+
+    .lead-date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    /* ── STATUS BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px 3px 7px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .badge-new {
+      background: rgba(249,115,22,0.15);
+      color: var(--orange);
+      border: 1px solid rgba(249,115,22,0.25);
+    }
+    .badge-new::before { background: var(--orange); }
+
+    .badge-contacted {
+      background: rgba(59,130,246,0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59,130,246,0.25);
+    }
+    .badge-contacted::before { background: #60a5fa; }
+
+    .badge-quoted {
+      background: rgba(245,158,11,0.15);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+    .badge-quoted::before { background: var(--amber); }
+
+    .badge-won {
+      background: rgba(34,197,94,0.15);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.25);
+    }
+    .badge-won::before { background: var(--green); }
+
+    .badge-lost {
+      background: rgba(239,68,68,0.1);
+      color: #f87171;
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+    .badge-lost::before { background: #f87171; }
+
+    /* ── RIGHT COLUMN ── */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── CONVERSION CHART ── */
+    .chart-body {
+      padding: 20px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 120px;
+      margin-bottom: 10px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+    }
+
+    .bar-track {
+      flex: 1;
+      width: 100%;
+      background: var(--bg-3);
+      border-radius: 4px 4px 0 0;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      background: linear-gradient(to top, var(--orange), var(--amber));
+      transform: scaleY(0);
+      transform-origin: bottom;
+      animation: bar-grow 0.8s cubic-bezier(0.34,1.2,0.64,1) both;
+      height: var(--h, 50%);
+    }
+
+    .bar-col:nth-child(1) .bar-fill { animation-delay: 0.1s; }
+    .bar-col:nth-child(2) .bar-fill { animation-delay: 0.2s; }
+    .bar-col:nth-child(3) .bar-fill { animation-delay: 0.3s; }
+    .bar-col:nth-child(4) .bar-fill { animation-delay: 0.4s; }
+    .bar-col:nth-child(5) .bar-fill { animation-delay: 0.5s; }
+    .bar-col:nth-child(6) .bar-fill { animation-delay: 0.6s; }
+    .bar-col:nth-child(7) .bar-fill { animation-delay: 0.7s; }
+
+    .bar-col.highlight .bar-fill {
+      background: linear-gradient(to top, var(--orange), var(--yellow));
+      box-shadow: 0 0 12px var(--orange-glow);
+    }
+
+    @keyframes bar-grow {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+
+    .bar-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-2);
+      text-align: center;
+    }
+
+    .bar-val {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-2);
+      text-align: center;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── PIPELINE FUNNEL ── */
+    .funnel-body {
+      padding: 16px 20px 20px;
+    }
+
+    .funnel-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .funnel-row:last-child { margin-bottom: 0; }
+
+    .funnel-name {
+      font-size: 11px;
+      color: var(--text-1);
+      font-weight: 500;
+      width: 68px;
+      flex-shrink: 0;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 10px;
+    }
+
+    .funnel-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .funnel-fill {
+      height: 100%;
+      border-radius: 4px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: funnel-grow 0.9s cubic-bezier(0.34,1.1,0.64,1) both;
+      width: var(--w, 50%);
+    }
+
+    .funnel-row:nth-child(1) .funnel-fill { animation-delay: 0.1s; background: var(--orange); }
+    .funnel-row:nth-child(2) .funnel-fill { animation-delay: 0.2s; background: #fb923c; }
+    .funnel-row:nth-child(3) .funnel-fill { animation-delay: 0.3s; background: var(--amber); }
+    .funnel-row:nth-child(4) .funnel-fill { animation-delay: 0.4s; background: var(--yellow); }
+    .funnel-row:nth-child(5) .funnel-fill { animation-delay: 0.5s; background: var(--green); }
+
+    @keyframes funnel-grow {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .funnel-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-0);
+      width: 24px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── RECENT ACTIVITY ── */
+    .activity-list {
+      padding: 0 0 4px;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-dim);
+      animation: row-enter 0.4s ease both;
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-item:nth-child(1) { animation-delay: 0.05s; }
+    .activity-item:nth-child(2) { animation-delay: 0.1s; }
+    .activity-item:nth-child(3) { animation-delay: 0.15s; }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.orange { background: rgba(249,115,22,0.15); }
+    .activity-icon.green { background: rgba(34,197,94,0.12); }
+    .activity-icon.blue { background: rgba(59,130,246,0.12); }
+
+    .activity-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-desc {
+      font-size: 12px;
+      color: var(--text-1);
+      line-height: 1.4;
+    }
+
+    .activity-desc strong { color: var(--text-0); }
+
+    .activity-time {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    /* ── TICKER ── */
+    .ticker-bar {
+      margin: 16px 0;
+      background: var(--bg-1);
+      border: 1px solid var(--border-dim);
+      border-left: 3px solid var(--orange);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 16px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ticker-tag {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--orange);
+      flex-shrink: 0;
+    }
+
+    .ticker-scroll {
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 48px;
+      white-space: nowrap;
+      animation: ticker 25s linear infinite;
+    }
+
+    .ticker-inner span {
+      font-size: 12px;
+      color: var(--text-1);
+      flex-shrink: 0;
+    }
+
+    .ticker-inner span em {
+      font-style: normal;
+      color: var(--amber);
+      font-family: var(--font-mono);
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-0); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+
+    /* ── MOBILE RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+      .right-col {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .shell { padding: 0 16px 40px; }
+      header { padding: 16px 0 20px; }
+
+      .live-badge { display: none; }
+      .logo-text { font-size: 17px; }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .stat-value { font-size: 28px; }
+
+      .bottom-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      /* Hide less important table columns on mobile */
+      .leads-table .col-date,
+      .leads-table .col-source { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .page-title h1 { font-size: 26px; }
+      .leads-table td { padding: 10px 12px; }
+      .leads-table thead th { padding: 8px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ambient"></div>
+
+<div class="shell">
+
+  <!-- ── HEADER ── -->
+  <header>
+    <a href="#" class="logo">
+      <div class="logo-mark">TC</div>
+      <span class="logo-text">Tradie<span>Core</span></span>
+    </a>
+
+    <div class="header-right">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        Live Feed
+      </div>
+
+      <div class="bell-wrap">
+        <button class="bell-btn" id="bellBtn" aria-label="Notifications">
+          <span class="bell-icon">🔔</span>
+          <span class="bell-badge" id="bellBadge">3</span>
+        </button>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-header">
+            <h4>Notifications</h4>
+            <span class="notif-clear" id="clearNotifs">Clear all</span>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot orange"></div>
+            <div class="notif-text">
+              <strong>New lead from Google Ads</strong> — Jake Morrison, deck build $8,200
+              <div class="notif-time">2 min ago</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot green"></div>
+            <div class="notif-text">
+              <strong>Quote accepted</strong> — Sarah Chen signed off on bathroom reno
+              <div class="notif-time">18 min ago</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot blue"></div>
+            <div class="notif-text">
+              <strong>Follow-up due</strong> — Call back Marcus Webb re: roof repair
+              <div class="notif-time">1 hr ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="avatar" title="Dave Graziano">DG</div>
+    </div>
+  </header>
+
+  <!-- ── TICKER ── -->
+  <div class="ticker-bar">
+    <span class="ticker-tag">Today</span>
+    <div class="ticker-scroll">
+      <div class="ticker-inner">
+        <span>🔥 <strong>Jake Morrison</strong> — Deck Build · <em>$8,200</em> · Just Now</span>
+        <span>✅ <strong>Sarah Chen</strong> — Quote Accepted · <em>$12,400</em> · 18min</span>
+        <span>📞 <strong>Ray Stubbs</strong> — Contacted · Roof Repair · <em>$3,800</em></span>
+        <span>📋 <strong>Apex Constructions</strong> — Quote Sent · Commercial Fit-out · <em>$48,000</em></span>
+        <span>🔥 <strong>Jake Morrison</strong> — Deck Build · <em>$8,200</em> · Just Now</span>
+        <span>✅ <strong>Sarah Chen</strong> — Quote Accepted · <em>$12,400</em> · 18min</span>
+        <span>📞 <strong>Ray Stubbs</strong> — Contacted · Roof Repair · <em>$3,800</em></span>
+        <span>📋 <strong>Apex Constructions</strong> — Quote Sent · Commercial Fit-out · <em>$48,000</em></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE TITLE ── -->
+  <div class="page-title">
+    <h1>Lead <em>Command</em></h1>
+    <p>Monday, 16 March 2026 · <span id="currentTime">--:--:--</span></p>
+  </div>
+
+  <!-- ── STATS CARDS ── -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        New Leads Today
+      </div>
+      <div class="stat-value" id="leadsCount">0</div>
+      <div class="stat-delta up" id="leadsDelta">↑ +4 from yesterday</div>
+      <div class="stat-glow"></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Active Pipeline
+      </div>
+      <div class="stat-value" id="pipelineCount">0</div>
+      <div class="stat-delta up" id="pipelineDelta">↑ +12 this week</div>
+      <div class="stat-glow"></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Conversion Rate
+      </div>
+      <div class="stat-value" id="convRate">0<em>%</em></div>
+      <div class="stat-delta up">↑ +3.2% vs last month</div>
+      <div class="stat-glow"></div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Pipeline Value
+      </div>
+      <div class="stat-value" id="pipelineValue">$0<em>k</em></div>
+      <div class="stat-delta neutral">― $142k quoted</div>
+      <div class="stat-glow"></div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM GRID ── -->
+  <div class="bottom-grid">
+
+    <!-- LEADS TABLE -->
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-title">Recent Leads</span>
+        <a href="#" class="section-action">View all →</a>
+      </div>
+      <table class="leads-table">
+        <thead>
+          <tr>
+            <th>Lead</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th class="col-source">Source</th>
+            <th class="col-date">Received</th>
+          </tr>
+        </thead>
+        <tbody id="leadsTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- CONVERSION CHART -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Weekly Leads</span>
+          <span class="section-action">Mar 10–16</span>
+        </div>
+        <div class="chart-body">
+          <div class="chart-bars">
+            <div class="bar-col">
+              <div class="bar-val">8</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:53%"></div></div>
+              <div class="bar-label">MON</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">12</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:80%"></div></div>
+              <div class="bar-label">TUE</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">6</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:40%"></div></div>
+              <div class="bar-label">WED</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">15</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:100%"></div></div>
+              <div class="bar-label">THU</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">9</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:60%"></div></div>
+              <div class="bar-label">FRI</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">4</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:27%"></div></div>
+              <div class="bar-label">SAT</div>
+            </div>
+            <div class="bar-col highlight">
+              <div class="bar-val">14</div>
+              <div class="bar-track"><div class="bar-fill" style="--h:93%"></div></div>
+              <div class="bar-label">TODAY</div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:linear-gradient(var(--orange),var(--amber))"></div>
+              New leads / day
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--yellow)"></div>
+              Today (live)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIPELINE FUNNEL -->
+      <div class="section-card">
+        <div class="section-header">
+          <span class="section-title">Pipeline Funnel</span>
+          <a href="#" class="section-action">Details</a>
+        </div>
+        <div class="funnel-body">
+          <div class="funnel-row">
+            <span class="funnel-name">New</span>
+            <div class="funnel-track"><div class="funnel-fill" style="--w:100%"></div></div>
+            <span class="funnel-count">47</span>
+          </div>
+          <div class="funnel-row">
+            <span class="funnel-name">Contacted</span>
+            <div class="funnel-track"><div class="funnel-fill" style="--w:74%"></div></div>
+            <span class="funnel-count">35</span>
+          </div>
+          <div class="funnel-row">
+            <span class="funnel-name">Quoted</span>
+            <div class="funnel-track"><div class="funnel-fill" style="--w:51%"></div></div>
+            <span class="funnel-count">24</span>
+          </div>
+          <div class="funnel-row">
+            <span class="funnel-name">Follow-up</span>
+            <div class="funnel-track"><div class="funnel-fill" style="--w:34%"></div></div>
+            <span class="funnel-count">16</span>
+          </div>
+          <div class="funnel-row">
+            <span class="funnel-name">Won</span>
+            <div class="funnel-track"><div class="funnel-fill" style="--w:19%"></div></div>
+            <span class="funnel-count">9</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // basePath for this experiment
+  const BASE_PATH = '/design-lab';
+
+  // ── CLOCK ──
+  function updateClock() {
+    const el = document.getElementById('currentTime');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ── ANIMATED COUNTERS ──
+  function animateCount(id, target, prefix, suffix, duration) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = Math.round(eased * target);
+      el.innerHTML = prefix + val + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // Trigger counters on load
+  window.addEventListener('load', () => {
+    animateCount('leadsCount', 14, '', '<em style="font-size:0.45em;color:var(--text-2);font-weight:400"> today</em>', 1200);
+    animateCount('pipelineCount', 47, '', '', 1400);
+    animateCount('convRate', 38, '', '<em>%</em>', 1600);
+    animateCount('pipelineValue', 284, '$', '<em>k</em>', 1800);
+  });
+
+  // ── LEADS DATA ──
+  const leads = [
+    { name: 'Jake Morrison',    service: 'Deck Build',         value: '$8,200',  status: 'new',       source: 'Google Ads', date: 'Just now' },
+    { name: 'Sarah Chen',       service: 'Bathroom Reno',      value: '$12,400', status: 'won',       source: 'Referral',   date: '18 min' },
+    { name: 'Marcus Webb',      service: 'Roof Repair',        value: '$3,800',  status: 'contacted', source: 'Website',    date: '1 hr' },
+    { name: 'Apex Constructions', service: 'Commercial Fit-out', value: '$48,000', status: 'quoted',  source: 'Referral',   date: '2 hrs' },
+    { name: 'Donna Fitzgerald', service: 'Kitchen Reno',       value: '$22,600', status: 'quoted',    source: 'Google Ads', date: '3 hrs' },
+    { name: 'Troy Nguyen',      service: 'Pergola Install',    value: '$5,100',  status: 'new',       source: 'Facebook',   date: '4 hrs' },
+    { name: 'Brenda Hall',      service: 'Fence & Gates',      value: '$7,400',  status: 'lost',      source: 'Website',    date: '6 hrs' },
+  ];
+
+  const statusMap = {
+    new:       { label: 'New',       cls: 'badge-new' },
+    contacted: { label: 'Contacted', cls: 'badge-contacted' },
+    quoted:    { label: 'Quoted',    cls: 'badge-quoted' },
+    won:       { label: 'Won',       cls: 'badge-won' },
+    lost:      { label: 'Lost',      cls: 'badge-lost' },
+  };
+
+  function renderLeads() {
+    const tbody = document.getElementById('leadsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = leads.map(l => {
+      const s = statusMap[l.status];
+      return `
+        <tr>
+          <td>
+            <div class="lead-name">${l.name}</div>
+            <div class="lead-service">${l.service}</div>
+          </td>
+          <td class="lead-value">${l.value}</td>
+          <td><span class="badge ${s.cls}">${s.label}</span></td>
+          <td class="col-source" style="font-size:11px;color:var(--text-2)">${l.source}</td>
+          <td class="col-date lead-date">${l.date}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  renderLeads();
+
+  // ── NOTIFICATION BELL ──
+  const bellBtn = document.getElementById('bellBtn');
+  const notifPanel = document.getElementById('notifPanel');
+  const bellBadge = document.getElementById('bellBadge');
+  const clearNotifs = document.getElementById('clearNotifs');
+
+  bellBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    notifPanel.classList.toggle('open');
+  });
+
+  document.addEventListener('click', () => {
+    notifPanel.classList.remove('open');
+  });
+
+  notifPanel.addEventListener('click', (e) => e.stopPropagation());
+
+  clearNotifs.addEventListener('click', () => {
+    bellBadge.style.display = 'none';
+    notifPanel.querySelectorAll('.notif-item').forEach(item => {
+      item.style.opacity = '0.4';
+    });
+    clearNotifs.textContent = 'Cleared';
+  });
+</script>
+
+</body>
+</html>
