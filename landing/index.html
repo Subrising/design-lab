@@ -257,9 +257,48 @@
     .grid .card:nth-child(8) { animation-delay: 0.16s; }
     .grid .card:nth-child(9) { animation-delay: 0.18s; }
 
+    /* Tablet */
     @media (max-width: 768px) {
-      .grid { grid-template-columns: 1fr; }
-      .hero { min-height: 40vh; padding: 4rem 1.5rem 3rem; }
+      .hero { min-height: 35vh; padding: 3rem 1.25rem 2rem; }
+      .hero h1 { font-size: clamp(2rem, 10vw, 3.5rem); }
+      .hero .subtitle { font-size: 1rem; padding: 0 0.5rem; }
+      .hero .count { font-size: 0.8rem; padding: 0.4rem 1rem; }
+
+      .filter-bar {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0 1.25rem 2rem;
+        gap: 0.4rem;
+      }
+      .filter-bar::-webkit-scrollbar { display: none; }
+      .filter-btn { white-space: nowrap; flex-shrink: 0; }
+
+      .grid-container { padding: 0 1rem 4rem; }
+      .grid { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2.5rem; }
+      .card-body { padding: 1.25rem; }
+      .card h3 { font-size: 1rem; }
+      .card p { font-size: 0.8rem; }
+      .card .tags { gap: 0.3rem; }
+      .card .tag { font-size: 0.65rem; padding: 0.15rem 0.4rem; }
+
+      .section-header { margin-bottom: 1.25rem; padding-bottom: 0.75rem; }
+      .section-header h2 { font-size: 1.2rem; }
+      .section-header p { font-size: 0.8rem; }
+
+      footer { padding: 2rem 1.25rem; font-size: 0.8rem; }
+    }
+
+    /* Small phones */
+    @media (max-width: 400px) {
+      .hero { padding: 2.5rem 1rem 1.5rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero .subtitle { font-size: 0.9rem; }
+      .grid-container { padding: 0 0.75rem 3rem; }
+      .grid { gap: 0.8rem; }
+      .card-body { padding: 1rem; }
     }
   </style>
 </head>
